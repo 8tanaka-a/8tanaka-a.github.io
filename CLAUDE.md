@@ -25,7 +25,7 @@
 
 ```
 src/
-├── assets/fonts/      # セルフホストフォント (woff2)
+├── assets/fonts/      # セルフホストフォント (woff)
 ├── assets/images/     # 画像
 ├── assets/svg/        # SVGファイル (ドットグリッド等)
 ├── components/        # Astroコンポーネント
@@ -76,4 +76,14 @@ src/
 - **ESLint**: flat config (`eslint.config.js`) — `@eslint/js` + `typescript-eslint` + `eslint-plugin-astro`
 - **Prettier**: セミコロンあり, シングルクォート, タブ幅2, `prettier-plugin-astro`
 - **VSCode**: 保存時に Prettier フォーマット + ESLint 自動修正
-- huskyなどのGitフック設定は後日決定
+- **husky + lint-staged**: コミット時にステージ済みファイルへ ESLint + Prettier 実行
+
+## Components
+
+- 1コンポーネント1役割 (Single Responsibility)
+- 命名は PascalCase (`Header.astro`, `DotGrid.astro`)
+- 親子間のスタイルは互いに干渉しない
+  - 親は子の内部スタイルに手を出さない
+  - 子は配置 (margin, position) を自分で持たない — 配置は親が制御する
+- スタイルは各 `.astro` の scoped CSS で閉じる、共有変数は `variables.css` から参照
+- Props は明示的に `interface Props` で型定義する
