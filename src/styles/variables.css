@@ -1,0 +1,27 @@
+:root {
+  /* Colors - Light */
+  --color-bg: #ececec;
+  --color-text: #1a1a1a;
+  --color-text-secondary: #4a4a4a;
+  --color-accent-orange: #d85a30;
+  --color-accent-blue: #4a6ba5;
+  --color-accent-green: #4a7c4e;
+
+  /* TODO: ダークモードのカラーは後日決定 */
+  /*
+  @media (prefers-color-scheme: dark) {
+  }
+  */
+
+  /* Fonts */
+  --font-geo: 'Geo', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+  --font-sans: 'Noto Sans JP', sans-serif;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 2rem;
+  --space-xl: 4rem;
+}
