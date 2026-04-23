@@ -3,6 +3,5 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://8tanaka-a.github.io',
-  base: '/portfolio',
+  // site と base はデプロイ設定時に決定
 });
