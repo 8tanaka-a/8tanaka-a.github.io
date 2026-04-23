@@ -1,7 +1,66 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import DotGrid from '../components/DotGrid.astro';
+
+/** トップページのハイライトパターン（"=>" 矢印） */
+const highlightedCells: [number, number][] = [
+  [4, 2],
+  [5, 3],
+  [1, 4],
+  [2, 4],
+  [3, 4],
+  [6, 4],
+  [7, 5],
+  [1, 6],
+  [2, 6],
+  [3, 6],
+  [6, 6],
+  [5, 7],
+  [4, 8],
+];
+
+/** アニメーション順序: "=" 左→右, ">" 頂点→外側 */
+const animationSequence: [number, number][][] = [
+  // "=" 左から右
+  [
+    [1, 4],
+    [1, 6],
+  ],
+  [
+    [2, 4],
+    [2, 6],
+  ],
+  [
+    [3, 4],
+    [3, 6],
+  ],
+  // ">" 頂点から外側へ
+  [[7, 5]],
+  [
+    [6, 4],
+    [6, 6],
+  ],
+  [
+    [5, 3],
+    [5, 7],
+  ],
+  [
+    [4, 2],
+    [4, 8],
+  ],
+];
 ---
 
 <BaseLayout title="one code | Frontend Engineer">
-  <main id="main"></main>
+  <main id="main" class="top-main">
+    <DotGrid highlightedCells={highlightedCells} animationSequence={animationSequence} />
+  </main>
 </BaseLayout>
+
+<style>
+  .top-main {
+    grid-column: 1 / 6;
+    align-self: end;
+    padding-bottom: 2rem;
+  }
+</style>
