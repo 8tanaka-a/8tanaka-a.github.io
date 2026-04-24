@@ -161,7 +161,7 @@ const highlightSet = new Set(highlightedCells.map(([c, r]) => `${c},${r}`));
 
     for (let i = 0; i < blinkCount; i++) {
       const randomDot = dotArray[Math.floor(Math.random() * dotArray.length)];
-      const startTime = Math.random() * 1.3;
+      const startTime = Math.random() * 0.8;
       blinkTimeline.to(
         randomDot,
         {
@@ -175,7 +175,7 @@ const highlightSet = new Set(highlightedCells.map(([c, r]) => `${c},${r}`));
     }
 
     // 点滅終了後、全ドットをグレーにリセットしてからシーケンス開始
-    const seqTimeline = gsap.timeline({ delay: 1.5 });
+    const seqTimeline = gsap.timeline({ delay: 1.0 });
     seqTimeline.set(dotArray, { fill: dotColor }, 0);
 
     const getDotsForWave = (wave: [number, number][]) =>

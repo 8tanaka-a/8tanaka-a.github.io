@@ -62,7 +62,7 @@ const ai: DotPatternData = {
 
 /** コード: { } — 速めに表示 */
 const code: DotPatternData = {
-  staggerInterval: 0.07,
+  staggerInterval: 0.05,
   highlightedCells: [
     // { 左
     [3, 2],
@@ -111,7 +111,7 @@ const code: DotPatternData = {
 
 /** 旗 — ポール + 旗部分 */
 const flag: DotPatternData = {
-  staggerInterval: 0.06,
+  staggerInterval: 0.05,
   highlightedCells: [
     // 旗 (rows 2-5)
     [2, 2],
@@ -190,7 +190,7 @@ const flag: DotPatternData = {
 
 /** Notes パターン1: Σ（シグマ） */
 const notes1: DotPatternData = {
-  staggerInterval: 0.06,
+  staggerInterval: 0.04,
   highlightedCells: [
     // 上辺
     [1, 2],
@@ -353,7 +353,7 @@ const hash: DotPatternData = {
 
 /** Notes 調べた系: ? (クエスチョンマーク) */
 const question: DotPatternData = {
-  staggerInterval: 0.08,
+  staggerInterval: 0.04,
   highlightedCells: [
     // 上辺
     [2, 2],
