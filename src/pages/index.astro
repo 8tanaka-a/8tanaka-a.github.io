@@ -355,6 +355,7 @@ const notes = [{ date: '2026/04/24', title: '記事タイトル', href: '/notes/
     ];
 
     const elements = targets.map((sel) => main.querySelector(sel)).filter((el) => el !== null);
+    if (elements.length === 0) return;
 
     gsap.set(elements, { opacity: 0, y: 16 });
     gsap.to(elements, {
