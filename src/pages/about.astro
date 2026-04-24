@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import DotGrid from '../components/DotGrid.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+
+/** About ページのハイライトパターン（後で指定） */
+const highlightedCells: [number, number][] = [];
+
+/** アニメーション順序（後で指定） */
+const animationSequence: [number, number][][] = [];
+
+const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'About' }];
+---
+
+<BaseLayout title="About | one code" pageTitle="About">
+  <main id="main" class="about-main">
+    <div class="dot-grid-area">
+      <DotGrid highlightedCells={highlightedCells} animationSequence={animationSequence} />
+    </div>
+
+    <div class="about-content">
+      <h2 class="about-role">Frontend Engineer</h2>
+      <p class="about-lead">作るのことが好きです。</p>
+
+      <div class="about-body">
+        <p>わからないことが、少しずつわかっていく過程が、特におもしろいです。</p>
+        <p>エラーが出るたびに少し強くなる。<br />そういう感覚で作ってきました。</p>
+        <p>
+          最近はAI駆動開発を実践しています。<br />まだまだ勉強中で、毎日新しい気づきがあります。
+        </p>
+        <p>もっと速く、もっと質高く作れるか、これからも試します。</p>
+      </div>
+    </div>
+
+    <div class="breadcrumb-area">
+      <Breadcrumb items={breadcrumbs} />
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .about-main {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-template-rows: repeat(10, 1fr);
+    gap: 0.75rem;
+    padding-bottom: 2rem;
+  }
+
+  .dot-grid-area {
+    grid-column: 1 / 5;
+    grid-row: 1 / -1;
+    align-self: end;
+  }
+
+  .about-content {
+    grid-column: 5 / 9;
+    grid-row: 3 / 9;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .about-role {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .about-lead {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .about-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .about-body p {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    line-height: 1.8;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .breadcrumb-area {
+    grid-column: 9 / 11;
+    grid-row: 10;
+    align-self: end;
+    justify-self: end;
+  }
+</style>
