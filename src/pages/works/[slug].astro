@@ -228,6 +228,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
       '.breadcrumb-area',
     ];
     const elements = targets.map((sel) => document.querySelector(sel)).filter((el) => el !== null);
+    if (elements.length === 0) return;
 
     gsap.set(elements, { opacity: 0, y: 16 });
     gsap.to(elements, {

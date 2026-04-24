@@ -1,0 +1,192 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DotGrid from '../../components/DotGrid.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { dotPatterns } from '../../data/dot-patterns';
+
+const sigmaPattern = dotPatterns.notes1;
+
+const notes = (await getCollection('notes', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+
+const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Notes' }];
+---
+
+<BaseLayout title="Notes | one code">
+  <main id="main" class="notes-list-main">
+    <div class="dot-grid-area">
+      <DotGrid
+        highlightedCells={sigmaPattern.highlightedCells}
+        animationSequence={sigmaPattern.animationSequence}
+        accentColor="--color-accent-green"
+        staggerInterval={sigmaPattern.staggerInterval}
+      />
+    </div>
+
+    <h2 class="notes-page-title">Notes</h2>
+
+    <ul class="notes-list">
+      {
+        notes.map((note) => {
+          const dateStr = new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit' })
+            .format(note.data.date)
+            .replace('-', '.');
+          return (
+            <li>
+              <a href={`/notes/${note.id}`} class="note-card">
+                <span class="note-date">{dateStr}</span>
+                <span class="note-title">{note.data.title}</span>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+
+    <div class="breadcrumb-area">
+      <Breadcrumb items={breadcrumbs} accentColor="--color-accent-green" />
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .notes-list-main {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-template-rows: repeat(10, 1fr);
+    gap: 0.75rem;
+    padding-bottom: 2rem;
+  }
+
+  .dot-grid-area {
+    grid-column: 1 / 5;
+    grid-row: 1 / -1;
+    align-self: end;
+  }
+
+  .notes-page-title {
+    grid-column: 6 / 8;
+    grid-row: 2;
+    font-family: var(--font-geo);
+    font-size: 2.25rem;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--color-text);
+    margin: 0;
+    align-self: start;
+  }
+
+  .notes-list {
+    grid-column: 6 / 11;
+    grid-row: 3 / 9;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .note-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.75rem;
+    background-color: var(--color-dot);
+    color: var(--color-text);
+    transition:
+      background-color 0.3s,
+      color 0.3s;
+  }
+
+  .note-card:hover {
+    background-color: var(--color-accent-green);
+    color: var(--color-bg);
+  }
+
+  .note-card:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+  }
+
+  .note-date {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+  }
+
+  .note-title {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+  }
+
+  .breadcrumb-area {
+    grid-column: 9 / 11;
+    grid-row: 10;
+    align-self: end;
+    justify-self: end;
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+
+  function enterAnimation() {
+    const elements = [
+      document.querySelector('.notes-page-title'),
+      ...Array.from(document.querySelectorAll('.note-card')),
+      document.querySelector('.breadcrumb-area'),
+    ].filter((el) => el !== null);
+    if (elements.length === 0) return;
+
+    gsap.set(elements, { opacity: 0, y: 16 });
+    gsap.to(elements, {
+      opacity: 1,
+      y: 0,
+      duration: 0.3,
+      stagger: 0.05,
+      ease: 'power2.out',
+      delay: 0.1,
+    });
+  }
+
+  function setupExitAnimation() {
+    document.addEventListener('astro:before-preparation', (e) => {
+      const main = document.querySelector('.notes-list-main');
+      if (!main || !('loader' in e)) return;
+
+      const elements = [
+        ...Array.from(main.querySelectorAll('.note-card')).reverse(),
+        main.querySelector('.notes-page-title'),
+      ].filter((el) => el !== null);
+
+      if (elements.length === 0) return;
+
+      const event = e as Event & { loader: () => Promise<void> };
+      const originalLoader = event.loader;
+      event.loader = async () => {
+        await Promise.all([
+          originalLoader(),
+          new Promise<void>((resolve) => {
+            gsap.to(elements, {
+              opacity: 0,
+              y: 10,
+              duration: 0.2,
+              stagger: 0.02,
+              ease: 'power2.in',
+              onComplete: resolve,
+            });
+          }),
+        ]);
+      };
+    });
+  }
+
+  enterAnimation();
+  setupExitAnimation();
+  document.addEventListener('astro:after-swap', enterAnimation);
+</script>
