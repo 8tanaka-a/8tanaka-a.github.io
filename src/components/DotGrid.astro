@@ -3,9 +3,11 @@ interface Props {
   highlightedCells?: [number, number][];
   /** アニメーションの波（各配列が同時に点灯するセル群） */
   animationSequence?: [number, number][][];
+  /** ウェーブ間の間隔（秒）。配列で指定すると途中で速度を変えられる */
+  staggerInterval?: number | number[];
 }
 
-const { highlightedCells = [], animationSequence = [] } = Astro.props;
+const { highlightedCells = [], animationSequence = [], staggerInterval = 0.12 } = Astro.props;
 
 const CELL_SIZE = 47;
 const GAP = 8;
@@ -87,7 +89,12 @@ const GRID_CELLS: [number, number][] = [
 const highlightSet = new Set(highlightedCells.map(([c, r]) => `${c},${r}`));
 ---
 
-<div class="dot-grid" aria-hidden="true" data-sequence={JSON.stringify(animationSequence)}>
+<div
+  class="dot-grid"
+  aria-hidden="true"
+  data-sequence={JSON.stringify(animationSequence)}
+  data-stagger={JSON.stringify(staggerInterval)}
+>
   <svg viewBox="0 0 550 550" fill="none" xmlns="http://www.w3.org/2000/svg" class="dot-grid-svg">
     {
       GRID_CELLS.map(([col, row]) => {
@@ -117,8 +124,11 @@ const highlightSet = new Set(highlightedCells.map(([c, r]) => `${c},${r}`));
     const dots = container.querySelectorAll<SVGRectElement>('.dot');
     const highlightedDots = container.querySelectorAll<SVGRectElement>('.dot.highlighted');
     const sequence: [number, number][][] = JSON.parse(container.dataset.sequence || '[]');
+    const stagger: number | number[] = JSON.parse(container.dataset.stagger || '0.12');
 
     if (highlightedDots.length === 0) return;
+    // アニメーション順序がなければそのまま表示
+    if (sequence.length === 0) return;
 
     const accentColor = getComputedStyle(document.documentElement)
       .getPropertyValue('--color-accent-orange')
@@ -154,8 +164,9 @@ const highlightSet = new Set(highlightedCells.map(([c, r]) => `${c},${r}`));
       );
     }
 
-    // Phase 2 & 3: シーケンスアニメーション
+    // 点滅終了後、全ドットをグレーにリセットしてからシーケンス開始
     const seqTimeline = gsap.timeline({ delay: 1.5 });
+    seqTimeline.set(dotArray, { fill: dotColor }, 0);
 
     const getDotsForWave = (wave: [number, number][]) =>
       wave
@@ -164,6 +175,7 @@ const highlightSet = new Set(highlightedCells.map(([c, r]) => `${c},${r}`));
         )
         .filter((el): el is SVGRectElement => el !== null);
 
+    let time = 0;
     sequence.forEach((wave, i) => {
       const waveDots = getDotsForWave(wave);
       seqTimeline.to(
@@ -173,8 +185,12 @@ const highlightSet = new Set(highlightedCells.map(([c, r]) => `${c},${r}`));
           duration: 0.15,
           ease: 'power2.out',
         },
-        i * 0.12,
+        time,
       );
+      const interval = Array.isArray(stagger)
+        ? (stagger[i] ?? stagger[stagger.length - 1])
+        : stagger;
+      time += interval;
     });
   }
 
@@ -190,6 +206,7 @@ const highlightSet = new Set(highlightedCells.map(([c, r]) => `${c},${r}`));
 <style>
   .dot-grid {
     width: 100%;
+    view-transition-name: dot-grid;
   }
 
   .dot-grid-svg {

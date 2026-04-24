@@ -6,10 +6,9 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description?: string;
-  pageTitle?: string;
 }
 
-const { title, description = 'one code - Frontend Engineer Portfolio', pageTitle } = Astro.props;
+const { title, description = 'one code - Frontend Engineer Portfolio' } = Astro.props;
 ---
 
 <!doctype html>
@@ -29,7 +28,7 @@ const { title, description = 'one code - Frontend Engineer Portfolio', pageTitle
   <body>
     <a href="#main" class="skip-link">コンテンツへスキップ</a>
     <div class="grid-container">
-      <Header pageTitle={pageTitle} />
+      <Header />
       <slot />
     </div>
   </body>

@@ -292,3 +292,85 @@ const notes = [
     font-size: 0.875rem;
   }
 </style>
+
+<script>
+  import gsap from 'gsap';
+
+  function setupExitAnimation() {
+    document.addEventListener('astro:before-preparation', (e) => {
+      const main = document.querySelector('.top-main');
+      if (!main || !('loader' in e)) return;
+
+      // フェードアウト順: Notes下→上, Works下→上, About
+      const targets = [
+        '.note-2',
+        '.note-1',
+        '.notes-title',
+        '.work-4',
+        '.work-3',
+        '.work-2',
+        '.work-1',
+        '.works-title',
+        '.about-card',
+        '.about-title',
+      ];
+
+      const elements = targets.map((sel) => main.querySelector(sel)).filter((el) => el !== null);
+
+      if (elements.length === 0) return;
+
+      const event = e as Event & { loader: () => Promise<void> };
+      const originalLoader = event.loader;
+      event.loader = async () => {
+        await Promise.all([
+          originalLoader(),
+          new Promise<void>((resolve) => {
+            gsap.to(elements, {
+              opacity: 0,
+              y: 10,
+              duration: 0.2,
+              stagger: 0.02,
+              ease: 'power2.in',
+              onComplete: resolve,
+            });
+          }),
+        ]);
+      };
+    });
+  }
+
+  function enterAnimation() {
+    const main = document.querySelector('.top-main');
+    if (!main) return;
+
+    // フェードイン順: About, Works上→下, Notes上→下（左から右）
+    const targets = [
+      '.about-title',
+      '.about-card',
+      '.works-title',
+      '.work-1',
+      '.work-2',
+      '.work-3',
+      '.work-4',
+      '.notes-title',
+      '.note-1',
+      '.note-2',
+    ];
+
+    const elements = targets.map((sel) => main.querySelector(sel)).filter((el) => el !== null);
+
+    gsap.set(elements, { opacity: 0, y: 16 });
+    gsap.to(elements, {
+      opacity: 1,
+      y: 0,
+      duration: 0.25,
+      stagger: 0.03,
+      ease: 'power2.out',
+      delay: 0.1,
+    });
+  }
+
+  setupExitAnimation();
+  enterAnimation();
+  document.addEventListener('astro:after-swap', enterAnimation);
+</script>
