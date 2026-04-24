@@ -35,10 +35,10 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
     </div>
 
     <div class="works-content">
-      <h3 class="work-heading">
+      <h2 class="work-heading">
         <span class="work-number">{work.number}</span>
         <span class="work-title">{work.title}</span>
-      </h3>
+      </h2>
 
       <dl class="work-meta">
         <div class="meta-row">
@@ -55,11 +55,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
       </dl>
 
       <div class="work-body">
-        {
-          work.body
-            .split('\n\n')
-            .map((paragraph) => <p set:html={paragraph.replace(/\n/g, '<br />')} />)
-        }
+        {work.body.split('\n\n').map((paragraph) => <p>{paragraph}</p>)}
       </div>
     </div>
 
@@ -161,6 +157,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
     font-size: 1rem;
     line-height: 1.75;
     letter-spacing: 0.08em;
+    white-space: pre-line;
     color: var(--color-text);
     margin: 0;
   }
