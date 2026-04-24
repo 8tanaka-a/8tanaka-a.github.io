@@ -1,4 +1,5 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
+import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 
 const notes = defineCollection({
@@ -9,6 +10,7 @@ const notes = defineCollection({
     date: z.coerce.date(),
     tags: z.array(z.string()).optional(),
     draft: z.boolean().default(false),
+    dotPattern: z.enum(['hash', 'question']).default('hash'),
   }),
 });
 

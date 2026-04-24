@@ -1,0 +1,189 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DotGrid from '../../components/DotGrid.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { dotPatterns } from '../../data/dot-patterns';
+
+export const getStaticPaths = (async () => {
+  const notes = await getCollection('notes', ({ data }) => !data.draft);
+  return notes.map((note, i) => ({
+    params: { slug: note.id },
+    props: { note, index: i },
+  }));
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { note, index } = Astro.props as Props;
+const { Content } = await render(note);
+
+const number = String(index + 1).padStart(2, '0');
+const dateStr = new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit' })
+  .format(note.data.date)
+  .replace('-', '.');
+
+const pattern = dotPatterns[note.data.dotPattern] ?? {
+  highlightedCells: [],
+  animationSequence: [],
+};
+
+const breadcrumbs = [
+  { label: 'Top', href: '/' },
+  { label: 'Notes', href: '/notes' },
+  { label: number },
+];
+---
+
+<BaseLayout title={`${note.data.title} | one code`}>
+  <main id="main" class="notes-main">
+    <div class="dot-grid-area">
+      <DotGrid
+        highlightedCells={pattern.highlightedCells}
+        animationSequence={pattern.animationSequence}
+        accentColor="--color-accent-green"
+        staggerInterval={pattern.staggerInterval}
+      />
+    </div>
+
+    <div class="notes-content">
+      <h2 class="note-heading">
+        <span class="note-number">{number}</span>
+        <span class="note-title">{note.data.title}</span>
+      </h2>
+
+      <p class="note-date">{dateStr}</p>
+
+      <div class="note-body">
+        <Content />
+      </div>
+    </div>
+
+    <div class="breadcrumb-area">
+      <Breadcrumb items={breadcrumbs} accentColor="--color-accent-green" />
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .notes-main {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-template-rows: repeat(10, 1fr);
+    gap: 0.75rem;
+    padding-bottom: 2rem;
+  }
+
+  .dot-grid-area {
+    grid-column: 1 / 5;
+    grid-row: 1 / -1;
+    align-self: end;
+  }
+
+  .notes-content {
+    grid-column: 6 / 11;
+    grid-row: 2 / 9;
+  }
+
+  .note-heading {
+    display: flex;
+    gap: 1rem;
+    font-family: var(--font-sans);
+    font-size: 2.25rem;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .note-number {
+    font-family: var(--font-mono);
+  }
+
+  .note-date {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--color-text);
+    margin: 0.5rem 0 0;
+  }
+
+  .note-body {
+    margin: 2.5rem 0 0;
+  }
+
+  .note-body :global(p) {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.75;
+    letter-spacing: 0.08em;
+    white-space: pre-line;
+    color: var(--color-text);
+    margin: 0 0 1.25rem;
+  }
+
+  .note-body :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .breadcrumb-area {
+    grid-column: 9 / 11;
+    grid-row: 10;
+    align-self: end;
+    justify-self: end;
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+
+  function enterAnimation() {
+    const targets = ['.note-heading', '.note-date', '.note-body', '.breadcrumb-area'];
+    const elements = targets.map((sel) => document.querySelector(sel)).filter((el) => el !== null);
+
+    gsap.set(elements, { opacity: 0, y: 16 });
+    gsap.to(elements, {
+      opacity: 1,
+      y: 0,
+      duration: 0.25,
+      stagger: 0.05,
+      ease: 'power2.out',
+      delay: 0.1,
+    });
+  }
+
+  function setupExitAnimation() {
+    document.addEventListener('astro:before-preparation', (e) => {
+      const main = document.querySelector('.notes-main');
+      if (!main || !('loader' in e)) return;
+
+      const targets = ['.breadcrumb-area', '.note-body', '.note-date', '.note-heading'];
+      const elements = targets.map((sel) => main.querySelector(sel)).filter((el) => el !== null);
+
+      if (elements.length === 0) return;
+
+      const event = e as Event & { loader: () => Promise<void> };
+      const originalLoader = event.loader;
+      event.loader = async () => {
+        await Promise.all([
+          originalLoader(),
+          new Promise<void>((resolve) => {
+            gsap.to(elements, {
+              opacity: 0,
+              y: 10,
+              duration: 0.2,
+              stagger: 0.02,
+              ease: 'power2.in',
+              onComplete: resolve,
+            });
+          }),
+        ]);
+      };
+    });
+  }
+
+  enterAnimation();
+  setupExitAnimation();
+  document.addEventListener('astro:after-swap', enterAnimation);
+</script>
