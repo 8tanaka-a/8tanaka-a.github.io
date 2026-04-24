@@ -1,0 +1,285 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DotGrid from '../../components/DotGrid.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { works } from '../../data/works';
+
+export const getStaticPaths = (() => {
+  return works.map((work) => ({
+    params: { slug: work.slug },
+    props: { work },
+  }));
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { work } = Astro.props as Props;
+const otherWorks = works.filter((w) => w.slug !== work.slug);
+
+/** ドットパターン（後で指定） */
+const highlightedCells: [number, number][] = [];
+const animationSequence: [number, number][][] = [];
+
+const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
+---
+
+<BaseLayout title={`${work.number} ${work.title} | one code`}>
+  <main id="main" class="works-main">
+    <div class="dot-grid-area">
+      <DotGrid
+        highlightedCells={highlightedCells}
+        animationSequence={animationSequence}
+        accentColor="--color-accent-blue"
+      />
+    </div>
+
+    <div class="works-content">
+      <h3 class="work-heading">
+        <span class="work-number">{work.number}</span>
+        <span class="work-title">{work.title}</span>
+      </h3>
+
+      <dl class="work-meta">
+        <div class="meta-row">
+          <dd>{work.period}</dd>
+        </div>
+        <div class="meta-row">
+          <dt>役割:</dt>
+          <dd>{work.role}</dd>
+        </div>
+        <div class="meta-row">
+          <dt>技術:</dt>
+          <dd>{work.tech}</dd>
+        </div>
+      </dl>
+
+      <div class="work-body">
+        {
+          work.body
+            .split('\n\n')
+            .map((paragraph) => <p set:html={paragraph.replace(/\n/g, '<br />')} />)
+        }
+      </div>
+    </div>
+
+    <nav class="works-nav" aria-label="他の実績">
+      {
+        otherWorks.map((w) => (
+          <a href={`/works/${w.slug}`} class="works-nav-card">
+            <span class="nav-number">{w.number}</span>
+            <span class="nav-title">{w.title}</span>
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="breadcrumb-area">
+      <Breadcrumb items={breadcrumbs} accentColor="--color-accent-blue" />
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .works-main {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-template-rows: repeat(10, 1fr);
+    gap: 0.75rem;
+    padding-bottom: 2rem;
+  }
+
+  .dot-grid-area {
+    grid-column: 1 / 5;
+    grid-row: 1 / -1;
+    align-self: end;
+  }
+
+  .works-page-title {
+    grid-column: 6 / 8;
+    grid-row: 1;
+    font-family: var(--font-geo);
+    font-size: 2.25rem;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--color-text);
+    margin: 0;
+    align-self: start;
+  }
+
+  .works-content {
+    grid-column: 6 / 11;
+    grid-row: 2 / 9;
+  }
+
+  .work-heading {
+    display: flex;
+    gap: 1rem;
+    font-family: var(--font-sans);
+    font-size: 2.25rem;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .work-number {
+    font-family: var(--font-mono);
+  }
+
+  .work-meta {
+    margin: 1rem 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .meta-row {
+    display: flex;
+    gap: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    color: var(--color-text);
+  }
+
+  .meta-row dt {
+    flex-shrink: 0;
+  }
+
+  .work-body {
+    margin: 2.5rem 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .work-body p {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.75;
+    letter-spacing: 0.08em;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  /* --- 下部ナビ --- */
+  .works-nav {
+    grid-column: 6 / 10;
+    grid-row: 10;
+    display: grid;
+    grid-template-columns: subgrid;
+    gap: 0.75rem;
+    align-self: end;
+  }
+
+  .works-nav-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    padding: 0.5rem 0.75rem;
+    background-color: var(--color-dot);
+    color: var(--color-text);
+    font-size: 0.75rem;
+    overflow: hidden;
+    transition:
+      background-color 0.3s,
+      color 0.3s;
+  }
+
+  .works-nav-card:hover {
+    background-color: var(--color-accent-blue);
+    color: var(--color-bg);
+  }
+
+  .works-nav-card:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+  }
+
+  .nav-number {
+    font-family: var(--font-mono);
+  }
+
+  .nav-title {
+    font-family: var(--font-sans);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .breadcrumb-area {
+    grid-column: 9 / 11;
+    grid-row: 10;
+    align-self: end;
+    justify-self: end;
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+
+  function enterAnimation() {
+    const targets = [
+      '.works-page-title',
+      '.work-heading',
+      '.work-meta',
+      '.work-body',
+      '.works-nav',
+      '.breadcrumb-area',
+    ];
+    const elements = targets.map((sel) => document.querySelector(sel)).filter((el) => el !== null);
+
+    gsap.set(elements, { opacity: 0, y: 16 });
+    gsap.to(elements, {
+      opacity: 1,
+      y: 0,
+      duration: 0.4,
+      stagger: 0.06,
+      ease: 'power2.out',
+      delay: 0.15,
+    });
+  }
+
+  function setupExitAnimation() {
+    document.addEventListener('astro:before-preparation', (e) => {
+      const main = document.querySelector('.works-main');
+      if (!main || !('loader' in e)) return;
+
+      const targets = [
+        '.breadcrumb-area',
+        '.works-nav',
+        '.work-body',
+        '.work-meta',
+        '.work-heading',
+        '.works-page-title',
+      ];
+      const elements = targets.map((sel) => main.querySelector(sel)).filter((el) => el !== null);
+
+      if (elements.length === 0) return;
+
+      const event = e as Event & { loader: () => Promise<void> };
+      const originalLoader = event.loader;
+      event.loader = async () => {
+        await Promise.all([
+          originalLoader(),
+          new Promise<void>((resolve) => {
+            gsap.to(elements, {
+              opacity: 0,
+              y: 10,
+              duration: 0.2,
+              stagger: 0.02,
+              ease: 'power2.in',
+              onComplete: resolve,
+            });
+          }),
+        ]);
+      };
+    });
+  }
+
+  enterAnimation();
+  setupExitAnimation();
+  document.addEventListener('astro:after-swap', enterAnimation);
+</script>
