@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import DotGrid from '../../components/DotGrid.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import { works } from '../../data/works';
+import { dotPatterns } from '../../data/dot-patterns';
 
 export const getStaticPaths = (() => {
   return works.map((work) => ({
@@ -16,9 +17,8 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { work } = Astro.props as Props;
 const otherWorks = works.filter((w) => w.slug !== work.slug);
 
-/** ドットパターン（後で指定） */
-const highlightedCells: [number, number][] = [];
-const animationSequence: [number, number][][] = [];
+const pattern = dotPatterns[work.dotPattern] ?? { highlightedCells: [], animationSequence: [] };
+const { highlightedCells, animationSequence } = pattern;
 
 const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
 ---
@@ -30,6 +30,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
         highlightedCells={highlightedCells}
         animationSequence={animationSequence}
         accentColor="--color-accent-blue"
+        staggerInterval={pattern.staggerInterval}
       />
     </div>
 
