@@ -1,0 +1,208 @@
+---
+interface Props {
+  highlightedCells?: [number, number][];
+  /** アニメーションの波（各配列が同時に点灯するセル群） */
+  animationSequence?: [number, number][][];
+}
+
+const { highlightedCells = [], animationSequence = [] } = Astro.props;
+
+const CELL_SIZE = 47;
+const GAP = 8;
+const STEP = CELL_SIZE + GAP; // 55
+const OFFSET = 4;
+
+/** dot-frame.svg の形状を (col, row) で定義 */
+const GRID_CELLS: [number, number][] = [
+  [7, 0],
+  [0, 1],
+  [3, 1],
+  [4, 1],
+  [6, 1],
+  [1, 2],
+  [2, 2],
+  [3, 2],
+  [4, 2],
+  [5, 2],
+  [6, 2],
+  [7, 2],
+  [0, 3],
+  [1, 3],
+  [2, 3],
+  [3, 3],
+  [4, 3],
+  [5, 3],
+  [6, 3],
+  [7, 3],
+  [8, 3],
+  [0, 4],
+  [1, 4],
+  [2, 4],
+  [3, 4],
+  [4, 4],
+  [5, 4],
+  [6, 4],
+  [7, 4],
+  [8, 4],
+  [9, 4],
+  [1, 5],
+  [2, 5],
+  [3, 5],
+  [4, 5],
+  [5, 5],
+  [6, 5],
+  [7, 5],
+  [0, 6],
+  [1, 6],
+  [2, 6],
+  [3, 6],
+  [4, 6],
+  [5, 6],
+  [6, 6],
+  [7, 6],
+  [8, 6],
+  [0, 7],
+  [1, 7],
+  [2, 7],
+  [3, 7],
+  [4, 7],
+  [5, 7],
+  [6, 7],
+  [7, 7],
+  [8, 7],
+  [1, 8],
+  [2, 8],
+  [3, 8],
+  [4, 8],
+  [5, 8],
+  [6, 8],
+  [7, 8],
+  [1, 9],
+  [3, 9],
+  [4, 9],
+  [5, 9],
+  [7, 9],
+];
+
+const highlightSet = new Set(highlightedCells.map(([c, r]) => `${c},${r}`));
+---
+
+<div class="dot-grid" aria-hidden="true" data-sequence={JSON.stringify(animationSequence)}>
+  <svg viewBox="0 0 550 550" fill="none" xmlns="http://www.w3.org/2000/svg" class="dot-grid-svg">
+    {
+      GRID_CELLS.map(([col, row]) => {
+        const x = OFFSET + col * STEP;
+        const y = OFFSET + row * STEP;
+        const isHighlighted = highlightSet.has(`${col},${row}`);
+        return (
+          <rect
+            x={x}
+            y={y}
+            width={CELL_SIZE}
+            height={CELL_SIZE}
+            class:list={['dot', { highlighted: isHighlighted }]}
+            data-col={col}
+            data-row={row}
+          />
+        );
+      })
+    }
+  </svg>
+</div>
+
+<script>
+  import gsap from 'gsap';
+
+  function initDotGrid(container: HTMLElement) {
+    const dots = container.querySelectorAll<SVGRectElement>('.dot');
+    const highlightedDots = container.querySelectorAll<SVGRectElement>('.dot.highlighted');
+    const sequence: [number, number][][] = JSON.parse(container.dataset.sequence || '[]');
+
+    if (highlightedDots.length === 0) return;
+
+    const accentColor = getComputedStyle(document.documentElement)
+      .getPropertyValue('--color-accent-orange')
+      .trim();
+    const dotColor = getComputedStyle(document.documentElement)
+      .getPropertyValue('--color-dot')
+      .trim();
+
+    // ハイライト対象のドットを最初はグレーにする
+    highlightedDots.forEach((dot) => {
+      dot.style.fill = dotColor;
+      dot.classList.remove('highlighted');
+    });
+
+    const dotArray = Array.from(dots);
+
+    // Phase 1: ランダム点滅
+    const blinkTimeline = gsap.timeline();
+    const blinkCount = 12;
+
+    for (let i = 0; i < blinkCount; i++) {
+      const randomDot = dotArray[Math.floor(Math.random() * dotArray.length)];
+      const startTime = Math.random() * 1.3;
+      blinkTimeline.to(
+        randomDot,
+        {
+          fill: accentColor,
+          duration: 0.08,
+          yoyo: true,
+          repeat: 1,
+        },
+        startTime,
+      );
+    }
+
+    // Phase 2 & 3: シーケンスアニメーション
+    const seqTimeline = gsap.timeline({ delay: 1.5 });
+
+    const getDotsForWave = (wave: [number, number][]) =>
+      wave
+        .map(([col, row]) =>
+          container.querySelector<SVGRectElement>(`.dot[data-col="${col}"][data-row="${row}"]`),
+        )
+        .filter((el): el is SVGRectElement => el !== null);
+
+    sequence.forEach((wave, i) => {
+      const waveDots = getDotsForWave(wave);
+      seqTimeline.to(
+        waveDots,
+        {
+          fill: accentColor,
+          duration: 0.15,
+          ease: 'power2.out',
+        },
+        i * 0.12,
+      );
+    });
+  }
+
+  // 初期化 + View Transitions 対応
+  function init() {
+    document.querySelectorAll<HTMLElement>('.dot-grid').forEach(initDotGrid);
+  }
+
+  init();
+  document.addEventListener('astro:after-swap', init);
+</script>
+
+<style>
+  .dot-grid {
+    width: 100%;
+  }
+
+  .dot-grid-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .dot {
+    fill: var(--color-dot, #e3e2e1);
+  }
+
+  .dot.highlighted {
+    fill: var(--color-accent-orange);
+  }
+</style>

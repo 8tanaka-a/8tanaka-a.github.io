@@ -1,7 +1,294 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import DotGrid from '../components/DotGrid.astro';
+import arrowSvgUrl from '../assets/svg/arrow.svg?url';
+
+/** トップページのハイライトパターン（"=>" 矢印） */
+const highlightedCells: [number, number][] = [
+  [4, 2],
+  [5, 3],
+  [1, 4],
+  [2, 4],
+  [3, 4],
+  [6, 4],
+  [7, 5],
+  [1, 6],
+  [2, 6],
+  [3, 6],
+  [6, 6],
+  [5, 7],
+  [4, 8],
+];
+
+/** アニメーション順序: "=" 左→右, ">" 頂点→外側 */
+const animationSequence: [number, number][][] = [
+  [
+    [1, 4],
+    [1, 6],
+  ],
+  [
+    [2, 4],
+    [2, 6],
+  ],
+  [
+    [3, 4],
+    [3, 6],
+  ],
+  [[7, 5]],
+  [
+    [6, 4],
+    [6, 6],
+  ],
+  [
+    [5, 3],
+    [5, 7],
+  ],
+  [
+    [4, 2],
+    [4, 8],
+  ],
+];
+
+/** ダミーデータ */
+const works = [
+  { number: '01', name: 'クレジット明細管理システム', href: '/works' },
+  { number: '02', name: '勤怠管理システム', href: '/works' },
+  { number: '03', name: 'イベントメディアサイト', href: '/works' },
+  { number: '04', name: 'イベント情報サイト', href: '/works' },
+];
+
+const notes = [
+  { date: '2026/04/23', title: '記事のタイトル記事のタイトル', href: '/notes' },
+  { date: '2026/04/23', title: '記事のタイトル記事のタイトル', href: '/notes' },
+];
 ---
 
 <BaseLayout title="one code | Frontend Engineer">
-  <main id="main"></main>
+  <main id="main" class="top-main" style={`--arrow-url: url('${arrowSvgUrl}')`}>
+    <div class="dot-grid-area">
+      <DotGrid highlightedCells={highlightedCells} animationSequence={animationSequence} />
+    </div>
+
+    <h2 class="section-title works-title">Works</h2>
+    {
+      works.map((work, i) => (
+        <a href={work.href} class={`card work-card work-${i + 1}`}>
+          <span class="card-text">
+            <span class="work-number">{work.number}</span>
+            <span class="work-name">{work.name}</span>
+          </span>
+        </a>
+      ))
+    }
+
+    <h2 class="section-title about-title">About</h2>
+    <a href="/about" class="card about-card">
+      <span class="card-text">
+        <span class="about-role">Frontend Engineer</span>
+        <span class="about-desc">作ることが好きです。</span>
+      </span>
+    </a>
+
+    <h2 class="section-title notes-title">Notes</h2>
+    {
+      notes.map((note, i) => (
+        <a href={note.href} class={`card note-card note-${i + 1}`}>
+          <span class="card-text">
+            <span class="note-date">{note.date}</span>
+            <span class="note-title">{note.title}</span>
+          </span>
+        </a>
+      ))
+    }
+  </main>
 </BaseLayout>
+
+<style>
+  .top-main {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-template-rows: repeat(10, 1fr);
+    gap: 0.75rem;
+    padding-bottom: 2rem;
+  }
+
+  /*
+    10列 × 10行グリッド:
+    col 1-4 : DotGrid (4列)
+    col 5-6 : About (2列 × 4行)
+    col 7-8 : Works (2列 × 2行 each)
+    col 9-10: Notes (2列)
+  */
+
+  /* --- DotGrid --- */
+  .dot-grid-area {
+    grid-column: 1 / 5;
+    grid-row: 1 / -1;
+    align-self: end;
+  }
+
+  /* --- Section titles --- */
+  .section-title {
+    font-family: var(--font-geo);
+    font-size: 2.8125rem;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .works-title {
+    grid-column: 7 / 8;
+    grid-row: 2;
+    align-self: end;
+  }
+
+  .about-title {
+    grid-column: 5 / 7;
+    grid-row: 6;
+    align-self: end;
+  }
+
+  .notes-title {
+    grid-column: 9 / 11;
+    grid-row: 4;
+    align-self: end;
+  }
+
+  /* --- Cards (共通) --- */
+  .card {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    background-color: var(--color-dot);
+    padding: 0.75rem;
+    color: var(--color-text);
+    transition:
+      background-color 0.3s,
+      color 0.3s;
+    overflow: hidden;
+  }
+
+  .card::after {
+    content: '';
+    position: absolute;
+    right: 0.75rem;
+    bottom: 1rem;
+    width: 0.7rem;
+    height: 0.7rem;
+    background-color: #fff;
+    mask-image: var(--arrow-url);
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    -webkit-mask-image: var(--arrow-url);
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .card:hover::after {
+    opacity: 1;
+  }
+
+  .card:hover {
+    color: var(--color-bg);
+  }
+
+  .card:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+  }
+
+  .card-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .work-card .card-text {
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+
+  /* --- Works (2列 × 2行) --- */
+  .work-card:hover {
+    background-color: var(--color-accent-blue);
+  }
+
+  .work-card {
+    grid-column: 7 / 9;
+  }
+
+  .work-1 {
+    grid-row: 3 / 5;
+  }
+  .work-2 {
+    grid-row: 5 / 7;
+  }
+  .work-3 {
+    grid-row: 7 / 9;
+  }
+  .work-4 {
+    grid-row: 9 / 11;
+  }
+
+  .work-number {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+  }
+
+  .work-name {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+  }
+
+  /* --- About (2列 × 4行) --- */
+  .about-card:hover {
+    background-color: var(--color-accent-orange);
+  }
+
+  .about-card {
+    grid-column: 5 / 7;
+    grid-row: 7 / 11;
+  }
+
+  .about-role {
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+  }
+
+  .about-desc {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+  }
+
+  /* --- Notes (2列 × 3行) --- */
+  .note-card:hover {
+    background-color: var(--color-accent-green);
+  }
+
+  .note-card {
+    grid-column: 9 / 11;
+  }
+
+  .note-1 {
+    grid-row: 5 / 8;
+  }
+  .note-2 {
+    grid-row: 8 / 11;
+  }
+
+  .note-date {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+  }
+
+  .note-title {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+  }
+</style>
