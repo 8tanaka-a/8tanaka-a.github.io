@@ -1,4 +1,5 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import DotGrid from '../components/DotGrid.astro';
 import arrowSvgUrl from '../assets/svg/arrow.svg?url';
@@ -57,7 +58,22 @@ const works = [
   { number: '04', name: 'イベント情報サイト', href: '/works/04' },
 ];
 
-const notes = [{ date: '2026/04/24', title: '記事タイトル', href: '/notes/01' }];
+const notesEntries = (await getCollection('notes', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+
+const formatDate = (date: Date) => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}/${m}/${d}`;
+};
+
+const notes = notesEntries.map((entry) => ({
+  date: formatDate(entry.data.date),
+  title: entry.data.title,
+  href: `/notes/${entry.id}`,
+}));
 ---
 
 <BaseLayout title="one code | Frontend Engineer">
