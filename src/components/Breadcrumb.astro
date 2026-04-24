@@ -6,12 +6,17 @@ interface BreadcrumbItem {
 
 interface Props {
   items: BreadcrumbItem[];
+  accentColor?: string;
 }
 
-const { items } = Astro.props;
+const { items, accentColor = '--color-accent-orange' } = Astro.props;
 ---
 
-<nav class="breadcrumb" aria-label="パンくずリスト">
+<nav
+  class="breadcrumb"
+  aria-label="パンくずリスト"
+  style={`--breadcrumb-accent: var(${accentColor})`}
+>
   <ol>
     {
       items.map((item, i) => (
@@ -74,6 +79,6 @@ const { items } = Astro.props;
   }
 
   .current {
-    color: var(--color-accent-orange);
+    color: var(--breadcrumb-accent, var(--color-accent-orange));
   }
 </style>

@@ -5,9 +5,16 @@ interface Props {
   animationSequence?: [number, number][][];
   /** ウェーブ間の間隔（秒）。配列で指定すると途中で速度を変えられる */
   staggerInterval?: number | number[];
+  /** ハイライト色の CSS カスタムプロパティ名 */
+  accentColor?: string;
 }
 
-const { highlightedCells = [], animationSequence = [], staggerInterval = 0.12 } = Astro.props;
+const {
+  highlightedCells = [],
+  animationSequence = [],
+  staggerInterval = 0.12,
+  accentColor = '--color-accent-orange',
+} = Astro.props;
 
 const CELL_SIZE = 47;
 const GAP = 8;
@@ -92,8 +99,10 @@ const highlightSet = new Set(highlightedCells.map(([c, r]) => `${c},${r}`));
 <div
   class="dot-grid"
   aria-hidden="true"
+  style={`--dot-accent: var(${accentColor})`}
   data-sequence={JSON.stringify(animationSequence)}
   data-stagger={JSON.stringify(staggerInterval)}
+  data-accent={accentColor}
 >
   <svg viewBox="0 0 550 550" fill="none" xmlns="http://www.w3.org/2000/svg" class="dot-grid-svg">
     {
@@ -130,8 +139,9 @@ const highlightSet = new Set(highlightedCells.map(([c, r]) => `${c},${r}`));
     // アニメーション順序がなければそのまま表示
     if (sequence.length === 0) return;
 
+    const accentVar = container.dataset.accent || '--color-accent-orange';
     const accentColor = getComputedStyle(document.documentElement)
-      .getPropertyValue('--color-accent-orange')
+      .getPropertyValue(accentVar)
       .trim();
     const dotColor = getComputedStyle(document.documentElement)
       .getPropertyValue('--color-dot')
@@ -220,6 +230,6 @@ const highlightSet = new Set(highlightedCells.map(([c, r]) => `${c},${r}`));
   }
 
   .dot.highlighted {
-    fill: var(--color-accent-orange);
+    fill: var(--dot-accent, var(--color-accent-orange));
   }
 </style>
