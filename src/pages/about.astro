@@ -3,11 +3,76 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import DotGrid from '../components/DotGrid.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
 
-/** About ページのハイライトパターン（後で指定） */
-const highlightedCells: [number, number][] = [];
+/** About ページのハイライトパターン（"@" 記号） */
+const highlightedCells: [number, number][] = [
+  // 上辺
+  [2, 2],
+  [3, 2],
+  [4, 2],
+  [5, 2],
+  [6, 2],
+  // 左右の柱
+  [1, 3],
+  [7, 3],
+  [1, 4],
+  [7, 4],
+  [1, 5],
+  [7, 5],
+  [1, 6],
+  [7, 6],
+  [1, 7],
+  [7, 7],
+  // 下辺
+  [2, 8],
+  [3, 8],
+  [4, 8],
+  [5, 8],
+  [6, 8],
+  // 内側 "a"
+  [4, 4],
+  [5, 4],
+  [3, 5],
+  [5, 5],
+  [3, 6],
+  [4, 6],
+  [5, 6],
+];
 
-/** アニメーション順序（後で指定） */
-const animationSequence: [number, number][][] = [];
+/** アニメーション順序: 内側反時計回り → 外側反時計回り */
+const animationSequence: [number, number][][] = [
+  // 内側 "a" 反時計回り (上→左→下→右)
+  [[5, 4]],
+  [[4, 4]],
+  [[3, 5]],
+  [[3, 6]],
+  [[4, 6]],
+  [[5, 6]],
+  [[5, 5]],
+  // 外側 反時計回り (上→左→下→右)
+  [[6, 2]],
+  [[5, 2]],
+  [[4, 2]],
+  [[3, 2]],
+  [[2, 2]],
+  [[1, 3]],
+  [[1, 4]],
+  [[1, 5]],
+  [[1, 6]],
+  [[1, 7]],
+  [[2, 8]],
+  [[3, 8]],
+  [[4, 8]],
+  [[5, 8]],
+  [[6, 8]],
+  [[7, 7]],
+  [[7, 6]],
+  [[7, 5]],
+  [[7, 4]],
+  [[7, 3]],
+];
+
+/** 内側(7ウェーブ)はゆっくり、外側(残り)は速く */
+const staggerInterval = [...Array(7).fill(0.07), ...Array(animationSequence.length - 7).fill(0.04)];
 
 const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'About' }];
 ---
@@ -15,11 +80,15 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'About' }];
 <BaseLayout title="About | one code">
   <main id="main" class="about-main">
     <div class="dot-grid-area">
-      <DotGrid highlightedCells={highlightedCells} animationSequence={animationSequence} />
+      <DotGrid
+        highlightedCells={highlightedCells}
+        animationSequence={animationSequence}
+        staggerInterval={staggerInterval}
+      />
     </div>
 
     <div class="about-content">
-      <h3 class="about-role">Frontend Engineer</h3>
+      <h2 class="about-role">Frontend Engineer</h2>
       <p class="about-lead">作るのことが好きです。</p>
 
       <p class="about-body">
