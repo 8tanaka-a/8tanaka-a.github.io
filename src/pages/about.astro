@@ -12,24 +12,25 @@ const animationSequence: [number, number][][] = [];
 const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'About' }];
 ---
 
-<BaseLayout title="About | one code" pageTitle="About">
+<BaseLayout title="About | one code">
   <main id="main" class="about-main">
     <div class="dot-grid-area">
       <DotGrid highlightedCells={highlightedCells} animationSequence={animationSequence} />
     </div>
 
     <div class="about-content">
-      <h2 class="about-role">Frontend Engineer</h2>
+      <h3 class="about-role">Frontend Engineer</h3>
       <p class="about-lead">作るのことが好きです。</p>
 
-      <div class="about-body">
-        <p>わからないことが、少しずつわかっていく過程が、特におもしろいです。</p>
-        <p>エラーが出るたびに少し強くなる。<br />そういう感覚で作ってきました。</p>
-        <p>
-          最近はAI駆動開発を実践しています。<br />まだまだ勉強中で、毎日新しい気づきがあります。
-        </p>
-        <p>もっと速く、もっと質高く作れるか、これからも試します。</p>
-      </div>
+      <p class="about-body">
+        わからないことが、少しずつわかっていく過程が、特におもしろいです。<br />
+        <br />
+        エラーが出るたびに少し強くなる。<br />そういう感覚で作ってきました。<br />
+        <br />
+        最近はAI駆動開発を実践しています。<br />まだまだ勉強中で、毎日新しい気づきがあります。<br />
+        <br />
+        もっと速く、もっと質高く作れるか、これからも試します。
+      </p>
     </div>
 
     <div class="breadcrumb-area">
@@ -56,17 +57,14 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'About' }];
   }
 
   .about-content {
-    grid-column: 5 / 9;
+    grid-column: 6 / 11;
     grid-row: 3 / 9;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
   }
 
   .about-role {
     font-family: var(--font-mono);
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: 2.25rem; /* 36px */
+    font-weight: 500;
     line-height: 1.2;
     color: var(--color-text);
     margin: 0;
@@ -74,23 +72,18 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'About' }];
 
   .about-lead {
     font-family: var(--font-sans);
-    font-size: 1rem;
+    font-size: 1.25rem; /* 20px */
     color: var(--color-text);
-    margin: 0;
+    margin: 12px 0 0;
   }
 
   .about-body {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-
-  .about-body p {
     font-family: var(--font-sans);
-    font-size: 0.875rem;
-    line-height: 1.8;
+    font-size: 1rem; /* 16px */
+    line-height: 1.75; /* 28px */
+    letter-spacing: 0.08em;
     color: var(--color-text);
-    margin: 0;
+    margin: 120px 0 0;
   }
 
   .breadcrumb-area {

@@ -1,10 +1,9 @@
 ---
 interface Props {
   available?: boolean;
-  pageTitle?: string;
 }
 
-const { available = true, pageTitle } = Astro.props;
+const { available = true } = Astro.props;
 ---
 
 <header class="header">
@@ -25,7 +24,6 @@ const { available = true, pageTitle } = Astro.props;
       </span>
     </p>
   </div>
-  {pageTitle && <h2 class="header-page-title">{pageTitle}</h2>}
   <nav class="header-nav" aria-label="ヘッダーナビゲーション">
     <button type="button" class="menu-button" aria-label="メニューを開く" aria-expanded="false">
       <span class="menu-icon" aria-hidden="true"></span>
@@ -80,19 +78,21 @@ const { available = true, pageTitle } = Astro.props;
   }
 
   .logo {
-    display: inline-block;
+    display: block;
+    line-height: 0.8;
   }
 
   .logo-text {
+    display: flex;
     font-family: var(--font-geo);
     font-weight: 500;
     letter-spacing: -0.03em;
     font-size: 2.8125rem; /* 45px */
-    line-height: 1;
     color: var(--color-text);
   }
 
   .logo-o {
+    display: block;
     color: var(--color-accent-orange);
   }
 
@@ -122,14 +122,6 @@ const { available = true, pageTitle } = Astro.props;
 
   .status-availability {
     color: var(--color-accent-green);
-  }
-
-  .header-page-title {
-    grid-column: 6 / 8;
-    font-family: var(--font-geo);
-    font-size: 2.8125rem; /* 45px */
-    line-height: 1;
-    color: var(--color-text);
   }
 
   .header-nav {
