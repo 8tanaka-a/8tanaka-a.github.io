@@ -93,3 +93,56 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'About' }];
     justify-self: end;
   }
 </style>
+
+<script>
+  import gsap from 'gsap';
+
+  function enterAnimation() {
+    const targets = ['.about-role', '.about-lead', '.about-body', '.breadcrumb-area'];
+    const elements = targets.map((sel) => document.querySelector(sel)).filter((el) => el !== null);
+
+    gsap.set(elements, { opacity: 0, y: 16 });
+    gsap.to(elements, {
+      opacity: 1,
+      y: 0,
+      duration: 0.4,
+      stagger: 0.08,
+      ease: 'power2.out',
+      delay: 0.15,
+    });
+  }
+
+  function setupExitAnimation() {
+    document.addEventListener('astro:before-preparation', (e) => {
+      const main = document.querySelector('.about-main');
+      if (!main || !('loader' in e)) return;
+
+      const targets = ['.breadcrumb-area', '.about-body', '.about-lead', '.about-role'];
+      const elements = targets.map((sel) => main.querySelector(sel)).filter((el) => el !== null);
+
+      if (elements.length === 0) return;
+
+      const event = e as Event & { loader: () => Promise<void> };
+      const originalLoader = event.loader;
+      event.loader = async () => {
+        await Promise.all([
+          originalLoader(),
+          new Promise<void>((resolve) => {
+            gsap.to(elements, {
+              opacity: 0,
+              y: 10,
+              duration: 0.2,
+              stagger: 0.02,
+              ease: 'power2.in',
+              onComplete: resolve,
+            });
+          }),
+        ]);
+      };
+    });
+  }
+
+  enterAnimation();
+  setupExitAnimation();
+  document.addEventListener('astro:after-swap', enterAnimation);
+</script>
