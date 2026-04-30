@@ -311,6 +311,7 @@ const notes = notesEntries.map((entry) => ({
 
   function setupExitAnimation() {
     document.addEventListener('astro:before-preparation', (e) => {
+      if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
       const main = document.querySelector('.top-main');
       if (!main || !('loader' in e)) return;
 
@@ -353,6 +354,7 @@ const notes = notesEntries.map((entry) => ({
   }
 
   function enterAnimation() {
+    if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
     const main = document.querySelector('.top-main');
     if (!main) return;
 

@@ -136,6 +136,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Notes' }];
   import gsap from 'gsap';
 
   function enterAnimation() {
+    if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
     const elements = [
       document.querySelector('.notes-page-title'),
       ...Array.from(document.querySelectorAll('.note-card')),
@@ -156,6 +157,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Notes' }];
 
   function setupExitAnimation() {
     document.addEventListener('astro:before-preparation', (e) => {
+      if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
       const main = document.querySelector('.notes-list-main');
       if (!main || !('loader' in e)) return;
 
