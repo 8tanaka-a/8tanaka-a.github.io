@@ -31,23 +31,11 @@ const items = [
     </ul>
 
     <div class="theme-toggle" role="group" aria-label="テーマ切替">
-      <button
-        type="button"
-        class="theme-button is-active"
-        aria-label="ライトモード"
-        aria-pressed="true"
-        data-theme="light"
-      >
-        <Image src={lightSvg} alt="" class="theme-icon" />
+      <button type="button" class="theme-button is-active" aria-pressed="true" data-theme="light">
+        <Image src={lightSvg} alt="ライトモード" class="theme-icon" loading="eager" />
       </button>
-      <button
-        type="button"
-        class="theme-button"
-        aria-label="ダークモード"
-        aria-pressed="false"
-        data-theme="dark"
-      >
-        <Image src={darkSvg} alt="" class="theme-icon" />
+      <button type="button" class="theme-button" aria-pressed="false" data-theme="dark">
+        <Image src={darkSvg} alt="ダークモード" class="theme-icon" loading="eager" />
       </button>
     </div>
   </nav>
