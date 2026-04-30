@@ -13,7 +13,7 @@ export const works: Work[] = [
   {
     slug: '01',
     number: '01',
-    title: 'クレジット明細管理システム',
+    title: 'クレジット管理システム',
     period: '2026.01 - 進行中 / BtoB',
     role: '仕様策定 / 実装 / CI/CD 設計',
     tech: 'TypeScript / Next.js / NestJS / PostgreSQL / Docker / GitHub Actions',
