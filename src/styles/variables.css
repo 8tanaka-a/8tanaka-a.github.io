@@ -33,3 +33,10 @@
   /* SP layout */
   --header-height-sp: 6.5rem;
 }
+
+/* status が改行する狭い SP では header 高さを底上げ */
+@media (max-width: 480px) {
+  :root {
+    --header-height-sp: 8rem;
+  }
+}

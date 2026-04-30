@@ -170,11 +170,22 @@ const { available = true } = Astro.props;
     color: var(--color-text);
   }
 
+  .status-value {
+    margin-right: 1rem;
+  }
+
   .status-indicator {
     display: inline-flex;
     align-items: center;
     gap: 0.8rem;
-    margin: 0 0 0 1rem;
+  }
+
+  /* 狭い SP で status が幅オーバーした時に改行できるように */
+  @media (max-width: 768px) {
+    .status {
+      flex-wrap: wrap;
+      row-gap: 0.25rem;
+    }
   }
 
   .status-dot {
