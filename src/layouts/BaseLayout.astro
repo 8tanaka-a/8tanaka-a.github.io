@@ -1,6 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import Header from '../components/Header.astro';
+import MenuOverlay from '../components/MenuOverlay.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -31,6 +32,7 @@ const { title, description = 'one code - Frontend Engineer Portfolio' } = Astro.
       <Header />
       <slot />
     </div>
+    <MenuOverlay transition:persist />
   </body>
 </html>
 

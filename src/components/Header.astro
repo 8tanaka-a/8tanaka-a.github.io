@@ -25,7 +25,14 @@ const { available = true } = Astro.props;
     </p>
   </div>
   <nav class="header-nav" aria-label="ヘッダーナビゲーション">
-    <button type="button" class="menu-button" aria-label="メニューを開く" aria-expanded="false">
+    <button
+      type="button"
+      class="menu-button"
+      data-menu-button
+      aria-label="メニューを開く"
+      aria-expanded="false"
+      aria-controls="menu-overlay"
+    >
       <span class="menu-icon" aria-hidden="true"></span>
     </button>
     <a
@@ -43,8 +50,9 @@ const { available = true } = Astro.props;
 <script>
   import gsap from 'gsap';
 
-  const dot = document.querySelector('.status-dot');
-  if (dot) {
+  function setupBlink() {
+    const dot = document.querySelector('.status-dot');
+    if (!dot) return;
     const blink = () => {
       const duration = 0.01 + Math.random() * 0.03;
       const delay = 0.1 + Math.random() * 1;
@@ -59,6 +67,35 @@ const { available = true } = Astro.props;
     };
     blink();
   }
+
+  function setupMenuButton() {
+    const button = document.querySelector<HTMLButtonElement>('[data-menu-button]');
+    if (!button) return;
+
+    let isOpen = false;
+    const setState = (open: boolean) => {
+      isOpen = open;
+      button.classList.toggle('is-open', open);
+      button.setAttribute('aria-expanded', String(open));
+      button.setAttribute('aria-label', open ? 'メニューを閉じる' : 'メニューを開く');
+    };
+
+    button.addEventListener('click', () => {
+      const next = !isOpen;
+      setState(next);
+      document.dispatchEvent(new CustomEvent(next ? 'menu:open' : 'menu:close'));
+    });
+
+    document.addEventListener('menu:close', () => setState(false));
+    document.addEventListener('astro:before-preparation', () => setState(false));
+  }
+
+  setupBlink();
+  setupMenuButton();
+  document.addEventListener('astro:after-swap', () => {
+    setupBlink();
+    setupMenuButton();
+  });
 </script>
 
 <style>
@@ -132,6 +169,8 @@ const { available = true } = Astro.props;
   }
 
   .github-link {
+    position: relative;
+    z-index: 60;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -149,6 +188,8 @@ const { available = true } = Astro.props;
   }
 
   .menu-button {
+    position: relative;
+    z-index: 60;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -170,6 +211,9 @@ const { available = true } = Astro.props;
     width: 20px;
     height: 1px;
     background-color: var(--color-text);
+    transition:
+      background-color 0.2s,
+      transform 0.2s ease;
   }
 
   .menu-icon::before,
@@ -180,6 +224,7 @@ const { available = true } = Astro.props;
     width: 100%;
     height: 1px;
     background-color: var(--color-text);
+    transition: transform 0.2s ease;
   }
 
   .menu-icon::before {
@@ -188,5 +233,17 @@ const { available = true } = Astro.props;
 
   .menu-icon::after {
     top: 7px;
+  }
+
+  .menu-button.is-open .menu-icon {
+    background-color: transparent;
+  }
+
+  .menu-button.is-open .menu-icon::before {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .menu-button.is-open .menu-icon::after {
+    transform: translateY(-7px) rotate(-45deg);
   }
 </style>
