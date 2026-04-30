@@ -276,11 +276,11 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
 <script>
   import gsap from 'gsap';
 
-  const isSP = () => window.matchMedia('(max-width: 1199px)').matches;
+  const isStacked = () => window.matchMedia('(max-width: 1199px)').matches;
 
   function enterAnimation() {
     if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
-    if (isSP()) return;
+    if (isStacked()) return;
     const targets = [
       '.works-page-title',
       '.work-heading',
@@ -306,7 +306,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
   function setupExitAnimation() {
     document.addEventListener('astro:before-preparation', (e) => {
       if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
-      if (isSP()) return;
+      if (isStacked()) return;
       const main = document.querySelector('.works-main');
       if (!main || !('loader' in e)) return;
 

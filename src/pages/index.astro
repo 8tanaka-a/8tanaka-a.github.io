@@ -386,8 +386,8 @@ const notes = notesEntries.map((entry) => ({
       grid-row: auto;
     }
 
-    /* タブレットでは 4件目を非表示にして 3列で揃える */
-    .work-4 {
+    /* タブレットでは works を 3 件のみ表示 (4 件目以降を非表示にして 3 列で揃える) */
+    .work-card:nth-child(n + 4) {
       display: none;
     }
 
@@ -438,12 +438,12 @@ const notes = notesEntries.map((entry) => ({
 <script>
   import gsap from 'gsap';
 
-  const isSP = () => window.matchMedia('(max-width: 1199px)').matches;
+  const isStacked = () => window.matchMedia('(max-width: 1199px)').matches;
 
   function setupExitAnimation() {
     document.addEventListener('astro:before-preparation', (e) => {
       if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
-      if (isSP()) return;
+      if (isStacked()) return;
       const main = document.querySelector('.top-main');
       if (!main || !('loader' in e)) return;
 
@@ -487,7 +487,7 @@ const notes = notesEntries.map((entry) => ({
 
   function enterAnimation() {
     if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
-    if (isSP()) return;
+    if (isStacked()) return;
     const main = document.querySelector('.top-main');
     if (!main) return;
 

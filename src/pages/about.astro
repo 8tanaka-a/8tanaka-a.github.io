@@ -214,11 +214,11 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'About' }];
 <script>
   import gsap from 'gsap';
 
-  const isSP = () => window.matchMedia('(max-width: 1199px)').matches;
+  const isStacked = () => window.matchMedia('(max-width: 1199px)').matches;
 
   function enterAnimation() {
     if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
-    if (isSP()) return;
+    if (isStacked()) return;
     const targets = ['.about-role', '.about-lead', '.about-body', '.breadcrumb-area'];
     const elements = targets.map((sel) => document.querySelector(sel)).filter((el) => el !== null);
     if (elements.length === 0) return;
@@ -237,7 +237,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'About' }];
   function setupExitAnimation() {
     document.addEventListener('astro:before-preparation', (e) => {
       if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
-      if (isSP()) return;
+      if (isStacked()) return;
       const main = document.querySelector('.about-main');
       if (!main || !('loader' in e)) return;
 

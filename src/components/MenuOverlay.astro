@@ -238,7 +238,7 @@ const items = [
 
   @media (max-width: 1199px) {
     .menu {
-      padding: calc(var(--header-height-sp) + 3.25rem) 2rem 1rem;
+      padding: calc(var(--header-height-stacked) + 3.25rem) 2rem 1rem;
       grid-template-columns: 1fr;
     }
 
@@ -250,9 +250,10 @@ const items = [
 
   @media (max-width: 767px) {
     .menu {
-      padding: calc(var(--header-height-sp) + 3.25rem) 0.75rem 1rem;
+      padding: calc(var(--header-height-stacked) + 3.25rem) 0.75rem 1rem;
     }
 
+    /* SP のみヘッダーの GitHub リンクが非表示になるため、メニュー側に GitHub 項目を出して代替する */
     .menu-github-item {
       display: block;
     }
