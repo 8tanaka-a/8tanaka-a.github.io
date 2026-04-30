@@ -27,16 +27,17 @@
   --space-lg: 2rem;
   --space-xl: 4rem;
 
-  /* Breakpoints */
-  --bp-sp: 768px;
+  /* Breakpoints (max-width in use). Mobile: ≤767px, Tablet: 768〜1199px, Desktop: ≥1200px */
+  --bp-mobile: 767px;
+  --bp-tablet: 1199px;
 
-  /* SP layout */
-  --header-height-sp: 6.5rem;
+  /* Stacked layout (タブレット+SP共通の縦積みレイアウト時の固定ヘッダー高さ) */
+  --header-height-stacked: 6.5rem;
 }
 
 /* status が改行する狭い SP では header 高さを底上げ */
 @media (max-width: 480px) {
   :root {
-    --header-height-sp: 8rem;
+    --header-height-stacked: 8rem;
   }
 }

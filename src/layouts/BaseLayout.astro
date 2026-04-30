@@ -62,12 +62,17 @@ const { title, description = 'one code - Frontend Engineer Portfolio' } = Astro.
     min-height: 100dvh;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 1199px) {
     .grid-container {
       grid-template-columns: 1fr;
-      padding-inline: 0.75rem; /* 12px */
-      padding-top: var(--header-height-sp);
+      padding-top: var(--header-height-stacked);
       padding-bottom: 4rem; /* 64px */
+    }
+  }
+
+  @media (max-width: 767px) {
+    .grid-container {
+      padding-inline: 0.75rem; /* 12px (SP のみ。タブレットは PC と同じ 32px) */
     }
   }
 </style>

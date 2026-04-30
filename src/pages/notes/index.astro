@@ -131,7 +131,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Notes' }];
     justify-self: end;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 1199px) {
     .notes-list-main {
       grid-template-columns: 1fr;
       grid-template-rows: none;
@@ -169,11 +169,11 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Notes' }];
 <script>
   import gsap from 'gsap';
 
-  const isSP = () => window.matchMedia('(max-width: 768px)').matches;
+  const isStacked = () => window.matchMedia('(max-width: 1199px)').matches;
 
   function enterAnimation() {
     if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
-    if (isSP()) return;
+    if (isStacked()) return;
     const elements = [
       document.querySelector('.notes-page-title'),
       ...Array.from(document.querySelectorAll('.note-card')),
@@ -195,7 +195,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Notes' }];
   function setupExitAnimation() {
     document.addEventListener('astro:before-preparation', (e) => {
       if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
-      if (isSP()) return;
+      if (isStacked()) return;
       const main = document.querySelector('.notes-list-main');
       if (!main || !('loader' in e)) return;
 

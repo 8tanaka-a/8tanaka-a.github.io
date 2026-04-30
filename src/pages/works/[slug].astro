@@ -116,7 +116,6 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
   .work-body-wrap {
     grid-column: 6 / 11;
     grid-row: 4 / 9;
-    margin-top: 2.5rem;
   }
 
   .work-heading {
@@ -222,7 +221,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
     justify-self: end;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 1199px) {
     .works-main {
       grid-template-columns: 1fr;
       grid-template-rows: none;
@@ -231,10 +230,6 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
       gap: 1.5rem;
       padding-top: 3.25rem;
       padding-bottom: 1rem;
-    }
-
-    .work-body-wrap {
-      margin-top: 0;
     }
 
     .work-head {
@@ -281,11 +276,11 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
 <script>
   import gsap from 'gsap';
 
-  const isSP = () => window.matchMedia('(max-width: 768px)').matches;
+  const isStacked = () => window.matchMedia('(max-width: 1199px)').matches;
 
   function enterAnimation() {
     if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
-    if (isSP()) return;
+    if (isStacked()) return;
     const targets = [
       '.works-page-title',
       '.work-heading',
@@ -311,7 +306,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
   function setupExitAnimation() {
     document.addEventListener('astro:before-preparation', (e) => {
       if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
-      if (isSP()) return;
+      if (isStacked()) return;
       const main = document.querySelector('.works-main');
       if (!main || !('loader' in e)) return;
 

@@ -52,7 +52,7 @@ const animationSequence: [number, number][][] = [
 
 /** ダミーデータ */
 const works = [
-  { number: '01', name: 'クレジット明細管理システム', href: '/works/01' },
+  { number: '01', name: 'クレジット管理システム', href: '/works/01' },
   { number: '02', name: '勤怠管理システム', href: '/works/02' },
   { number: '03', name: 'イベントメディアサイト', href: '/works/03' },
   { number: '04', name: 'イベント情報サイト', href: '/works/04' },
@@ -323,7 +323,7 @@ const notes = notesEntries.map((entry) => ({
     font-size: 0.875rem;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 1199px) {
     .top-main {
       grid-template-columns: 1fr;
       grid-template-rows: none;
@@ -365,6 +365,44 @@ const notes = notesEntries.map((entry) => ({
       color: var(--color-accent-green);
     }
 
+    /* タブレット: works/notes を grid 配置 (SP は下のメディアクエリで上書き) */
+    .works-carousel {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+
+    .notes-carousel {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+
+    /* PC グリッド用の grid-column/grid-row を解除して子要素を carousel grid に流す */
+    .about-card,
+    .work-card,
+    .note-card {
+      grid-column: auto;
+      grid-row: auto;
+    }
+
+    /* タブレットでは works を 3 件のみ表示 (4 件目以降を非表示にして 3 列で揃える) */
+    .work-card:nth-child(n + 4) {
+      display: none;
+    }
+
+    .about-card {
+      aspect-ratio: 4 / 1;
+    }
+
+    .work-card,
+    .note-card {
+      aspect-ratio: 16 / 9;
+    }
+  }
+
+  @media (max-width: 767px) {
+    /* SP: works/notes をカルーセル(横スクロール)に戻す */
     .carousel {
       display: flex;
       gap: 0.75rem;
@@ -374,16 +412,18 @@ const notes = notesEntries.map((entry) => ({
       scrollbar-width: none;
       margin-inline: -0.75rem;
       padding-inline: 0.75rem;
+      grid-template-columns: none;
     }
 
     .carousel::-webkit-scrollbar {
       display: none;
     }
 
-    /* 全カード共通の高さ: About カード幅 (100vw - 余白24px) を 16:9 で算出した高さに統一 */
+    /* SP では全カードを About カード幅 (100vw - 余白24px) を 16:9 で算出した高さに統一 */
     .about-card,
     .work-card,
     .note-card {
+      aspect-ratio: auto;
       height: calc((100vw - 1.5rem) * 9 / 16);
     }
 
@@ -398,12 +438,12 @@ const notes = notesEntries.map((entry) => ({
 <script>
   import gsap from 'gsap';
 
-  const isSP = () => window.matchMedia('(max-width: 768px)').matches;
+  const isStacked = () => window.matchMedia('(max-width: 1199px)').matches;
 
   function setupExitAnimation() {
     document.addEventListener('astro:before-preparation', (e) => {
       if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
-      if (isSP()) return;
+      if (isStacked()) return;
       const main = document.querySelector('.top-main');
       if (!main || !('loader' in e)) return;
 
@@ -447,7 +487,7 @@ const notes = notesEntries.map((entry) => ({
 
   function enterAnimation() {
     if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
-    if (isSP()) return;
+    if (isStacked()) return;
     const main = document.querySelector('.top-main');
     if (!main) return;
 
