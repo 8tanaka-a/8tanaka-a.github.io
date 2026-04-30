@@ -26,4 +26,10 @@
   --space-md: 1rem;
   --space-lg: 2rem;
   --space-xl: 4rem;
+
+  /* Breakpoints */
+  --bp-sp: 768px;
+
+  /* SP layout */
+  --header-height-sp: 6.5rem;
 }

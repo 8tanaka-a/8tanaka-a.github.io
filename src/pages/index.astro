@@ -82,37 +82,47 @@ const notes = notesEntries.map((entry) => ({
       <DotGrid highlightedCells={highlightedCells} animationSequence={animationSequence} />
     </div>
 
-    <h2 class="section-title works-title">Works</h2>
-    {
-      works.map((work, i) => (
-        <a href={work.href} class={`card work-card work-${i + 1}`}>
-          <span class="card-text">
-            <span class="work-number">{work.number}</span>
-            <span class="work-name">{work.name}</span>
-          </span>
-        </a>
-      ))
-    }
+    <section class="about-section">
+      <h2 class="section-title about-title">About</h2>
+      <a href="/about" class="card about-card">
+        <span class="card-text">
+          <span class="about-role">Frontend Engineer</span>
+          <span class="about-desc">作ることが好きです。</span>
+        </span>
+      </a>
+    </section>
 
-    <h2 class="section-title about-title">About</h2>
-    <a href="/about" class="card about-card">
-      <span class="card-text">
-        <span class="about-role">Frontend Engineer</span>
-        <span class="about-desc">作ることが好きです。</span>
-      </span>
-    </a>
+    <section class="works-section">
+      <h2 class="section-title works-title">Works</h2>
+      <div class="carousel works-carousel">
+        {
+          works.map((work, i) => (
+            <a href={work.href} class={`card work-card work-${i + 1}`}>
+              <span class="card-text">
+                <span class="work-number">{work.number}</span>
+                <span class="work-name">{work.name}</span>
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </section>
 
-    <h2 class="section-title notes-title">Notes</h2>
-    {
-      notes.map((note, i) => (
-        <a href={note.href} class={`card note-card note-${i + 1}`}>
-          <span class="card-text">
-            <span class="note-date">{note.date}</span>
-            <span class="note-title">{note.title}</span>
-          </span>
-        </a>
-      ))
-    }
+    <section class="notes-section">
+      <h2 class="section-title notes-title">Notes</h2>
+      <div class="carousel notes-carousel">
+        {
+          notes.map((note, i) => (
+            <a href={note.href} class={`card note-card note-${i + 1}`}>
+              <span class="card-text">
+                <span class="note-date">{note.date}</span>
+                <span class="note-title">{note.title}</span>
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </section>
   </main>
 </BaseLayout>
 
@@ -125,6 +135,14 @@ const notes = notesEntries.map((entry) => ({
     grid-template-rows: repeat(10, 1fr);
     gap: 0.75rem;
     padding-bottom: 2rem;
+  }
+
+  /* PC: section と carousel ラッパーを透過させて子要素を直接 grid に流す */
+  .about-section,
+  .works-section,
+  .notes-section,
+  .carousel {
+    display: contents;
   }
 
   /*
@@ -304,14 +322,88 @@ const notes = notesEntries.map((entry) => ({
     font-family: var(--font-sans);
     font-size: 0.875rem;
   }
+
+  @media (max-width: 768px) {
+    .top-main {
+      grid-template-columns: 1fr;
+      grid-template-rows: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4rem; /* 64px: セクション間 */
+      padding-top: 3.25rem; /* 52px: ヘッダーと最初のセクション間 */
+      padding-bottom: 1rem;
+    }
+
+    .dot-grid-area {
+      display: none;
+    }
+
+    .about-section,
+    .works-section,
+    .notes-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem; /* 24px: タイトルとカード(群)間 */
+    }
+
+    .about-title,
+    .works-title,
+    .notes-title {
+      align-self: stretch;
+      text-align: left;
+    }
+
+    .about-title {
+      color: var(--color-accent-orange);
+    }
+
+    .works-title {
+      color: var(--color-accent-blue);
+    }
+
+    .notes-title {
+      color: var(--color-accent-green);
+    }
+
+    .carousel {
+      display: flex;
+      gap: 0.75rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline-start: 0.75rem;
+      scrollbar-width: none;
+      margin-inline: -0.75rem;
+      padding-inline: 0.75rem;
+    }
+
+    .carousel::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* 全カード共通の高さ: About カード幅 (100vw - 余白24px) を 16:9 で算出した高さに統一 */
+    .about-card,
+    .work-card,
+    .note-card {
+      height: calc((100vw - 1.5rem) * 9 / 16);
+    }
+
+    .work-card,
+    .note-card {
+      flex: 0 0 75%;
+      scroll-snap-align: start;
+    }
+  }
 </style>
 
 <script>
   import gsap from 'gsap';
 
+  const isSP = () => window.matchMedia('(max-width: 768px)').matches;
+
   function setupExitAnimation() {
     document.addEventListener('astro:before-preparation', (e) => {
       if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
+      if (isSP()) return;
       const main = document.querySelector('.top-main');
       if (!main || !('loader' in e)) return;
 
@@ -355,6 +447,7 @@ const notes = notesEntries.map((entry) => ({
 
   function enterAnimation() {
     if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
+    if (isSP()) return;
     const main = document.querySelector('.top-main');
     if (!main) return;
 

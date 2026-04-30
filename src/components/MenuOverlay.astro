@@ -28,6 +28,18 @@ const items = [
           </li>
         ))
       }
+      <li class="menu-github-item">
+        <a
+          href="https://github.com/8tanaka-a"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="menu-card menu-github"
+          data-menu-link
+          style="--card-accent: var(--color-text)"
+        >
+          GitHub
+        </a>
+      </li>
     </ul>
 
     <div class="theme-toggle" role="group" aria-label="テーマ切替">
@@ -220,6 +232,26 @@ const items = [
     gap: 0.75rem;
   }
 
+  .menu-github-item {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .menu {
+      padding: calc(var(--header-height-sp) + 3.25rem) 0.75rem 1rem;
+      grid-template-columns: 1fr;
+    }
+
+    .menu-list {
+      grid-column: 1;
+      grid-row: 1 / 9;
+    }
+
+    .menu-github-item {
+      display: block;
+    }
+  }
+
   .menu-card {
     display: flex;
     align-items: center;
@@ -254,6 +286,13 @@ const items = [
     display: flex;
     align-items: center;
     gap: 0.75rem;
+  }
+
+  @media (max-width: 768px) {
+    .theme-toggle {
+      grid-column: 1;
+      grid-row: 10;
+    }
   }
 
   .theme-button {

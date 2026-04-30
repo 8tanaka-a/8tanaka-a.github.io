@@ -130,13 +130,50 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Notes' }];
     align-self: end;
     justify-self: end;
   }
+
+  @media (max-width: 768px) {
+    .notes-list-main {
+      grid-template-columns: 1fr;
+      grid-template-rows: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      padding-top: 3.25rem;
+      padding-bottom: 1rem;
+    }
+
+    .notes-page-title {
+      order: 1;
+      font-size: 1.5rem; /* 24px */
+    }
+
+    .dot-grid-area {
+      order: 2;
+      align-self: end;
+      width: 50vw;
+      margin-bottom: 2.5rem;
+    }
+
+    .notes-list {
+      order: 3;
+    }
+
+    .breadcrumb-area {
+      order: 4;
+      align-self: end;
+      margin-top: 2rem;
+    }
+  }
 </style>
 
 <script>
   import gsap from 'gsap';
 
+  const isSP = () => window.matchMedia('(max-width: 768px)').matches;
+
   function enterAnimation() {
     if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
+    if (isSP()) return;
     const elements = [
       document.querySelector('.notes-page-title'),
       ...Array.from(document.querySelectorAll('.note-card')),
@@ -158,6 +195,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Notes' }];
   function setupExitAnimation() {
     document.addEventListener('astro:before-preparation', (e) => {
       if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
+      if (isSP()) return;
       const main = document.querySelector('.notes-list-main');
       if (!main || !('loader' in e)) return;
 

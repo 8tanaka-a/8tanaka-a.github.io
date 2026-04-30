@@ -219,6 +219,12 @@ const highlightSet = new Set(highlightedCells.map(([c, r]) => `${c},${r}`));
     view-transition-name: dot-grid;
   }
 
+  @media (max-width: 768px) {
+    .dot-grid {
+      view-transition-name: none;
+    }
+  }
+
   .dot-grid-svg {
     display: block;
     width: 100%;

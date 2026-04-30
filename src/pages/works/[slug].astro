@@ -34,7 +34,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
       />
     </div>
 
-    <div class="works-content">
+    <div class="work-head">
       <h2 class="work-heading">
         <span class="work-number">{work.number}</span>
         <span class="work-title">{work.title}</span>
@@ -53,7 +53,9 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
           <dd>{work.tech}</dd>
         </div>
       </dl>
+    </div>
 
+    <div class="work-body-wrap">
       <div class="work-body">
         {work.body.split('\n\n').map((paragraph) => <p>{paragraph}</p>)}
       </div>
@@ -106,9 +108,15 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
     align-self: start;
   }
 
-  .works-content {
+  .work-head {
     grid-column: 6 / 11;
-    grid-row: 2 / 9;
+    grid-row: 2 / 4;
+  }
+
+  .work-body-wrap {
+    grid-column: 6 / 11;
+    grid-row: 4 / 9;
+    margin-top: 2.5rem;
   }
 
   .work-heading {
@@ -146,7 +154,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
   }
 
   .work-body {
-    margin: 2.5rem 0 0;
+    margin: 0;
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
@@ -213,13 +221,71 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
     align-self: end;
     justify-self: end;
   }
+
+  @media (max-width: 768px) {
+    .works-main {
+      grid-template-columns: 1fr;
+      grid-template-rows: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      padding-top: 3.25rem;
+      padding-bottom: 1rem;
+    }
+
+    .work-body-wrap {
+      margin-top: 0;
+    }
+
+    .work-head {
+      order: 1;
+    }
+
+    .work-heading {
+      font-size: 1.5rem; /* 24px */
+    }
+
+    .dot-grid-area {
+      order: 2;
+      align-self: end;
+      width: 50vw;
+      margin-bottom: 2.5rem;
+    }
+
+    .work-body-wrap {
+      order: 3;
+    }
+
+    .works-nav {
+      order: 4;
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 2rem;
+      margin-bottom: 4.75rem; /* 76px + works-main gap 24px = 100px */
+    }
+
+    .works-nav-card {
+      width: 100%;
+    }
+
+    .breadcrumb-area {
+      order: 5;
+      align-self: end;
+      margin-top: 0;
+    }
+  }
 </style>
 
 <script>
   import gsap from 'gsap';
 
+  const isSP = () => window.matchMedia('(max-width: 768px)').matches;
+
   function enterAnimation() {
     if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
+    if (isSP()) return;
     const targets = [
       '.works-page-title',
       '.work-heading',
@@ -245,6 +311,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
   function setupExitAnimation() {
     document.addEventListener('astro:before-preparation', (e) => {
       if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
+      if (isSP()) return;
       const main = document.querySelector('.works-main');
       if (!main || !('loader' in e)) return;
 
