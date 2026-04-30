@@ -50,13 +50,18 @@ const { available = true } = Astro.props;
 <script>
   import gsap from 'gsap';
 
+  let blinkTween: gsap.core.Tween | null = null;
+  let currentSetState: ((open: boolean) => void) | null = null;
+  let documentListenersAttached = false;
+
   function setupBlink() {
     const dot = document.querySelector('.status-dot');
     if (!dot) return;
+    blinkTween?.kill();
     const blink = () => {
       const duration = 0.01 + Math.random() * 0.03;
       const delay = 0.1 + Math.random() * 1;
-      gsap.to(dot, {
+      blinkTween = gsap.to(dot, {
         opacity: 0.2,
         duration,
         yoyo: true,
@@ -79,6 +84,7 @@ const { available = true } = Astro.props;
       button.setAttribute('aria-expanded', String(open));
       button.setAttribute('aria-label', open ? 'メニューを閉じる' : 'メニューを開く');
     };
+    currentSetState = setState;
 
     button.addEventListener('click', () => {
       const next = !isOpen;
@@ -86,8 +92,11 @@ const { available = true } = Astro.props;
       document.dispatchEvent(new CustomEvent(next ? 'menu:open' : 'menu:close'));
     });
 
-    document.addEventListener('menu:close', () => setState(false));
-    document.addEventListener('astro:before-preparation', () => setState(false));
+    if (!documentListenersAttached) {
+      documentListenersAttached = true;
+      document.addEventListener('menu:close', () => currentSetState?.(false));
+      document.addEventListener('astro:before-preparation', () => currentSetState?.(false));
+    }
   }
 
   setupBlink();
