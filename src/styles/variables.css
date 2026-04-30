@@ -27,8 +27,9 @@
   --space-lg: 2rem;
   --space-xl: 4rem;
 
-  /* Breakpoints */
-  --bp-sp: 768px;
+  /* Breakpoints (max-width in use). SP: ≤767px, Tablet: 768〜1199px, Desktop: ≥1200px */
+  --bp-sp: 767px;
+  --bp-tablet: 1199px;
 
   /* SP layout */
   --header-height-sp: 6.5rem;

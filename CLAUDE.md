@@ -45,11 +45,11 @@ src/
 - 左下にSVGドットグリッド: ランダム点滅 → 特定の記号表示のアニメーション
 - font-size は `clamp()` + `rem` で指定
 
-## Breakpoints (TODO: タブレット・スマホのグリッドは後日設計)
+## Breakpoints
 
-- PC: 1024px〜
-- タブレット: 768〜1023px
-- スマホ: 〜767px
+- PC: 1200px〜 (10列グリッド)
+- タブレット: 768〜1199px (SP同様の flex-column。ブラウザ余白は PC と同じ 32px、Header に GitHub リンクあり、Top の works/notes はカルーセルではなく grid 配置)
+- スマホ: 〜767px (ブラウザ余白 12px、Header は GitHub なし、Top の works/notes は横スクロールカルーセル)
 
 ## Pages
 

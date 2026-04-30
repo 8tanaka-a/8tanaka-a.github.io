@@ -131,7 +131,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Notes' }];
     justify-self: end;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 1199px) {
     .notes-list-main {
       grid-template-columns: 1fr;
       grid-template-rows: none;
@@ -169,7 +169,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Notes' }];
 <script>
   import gsap from 'gsap';
 
-  const isSP = () => window.matchMedia('(max-width: 768px)').matches;
+  const isSP = () => window.matchMedia('(max-width: 1199px)').matches;
 
   function enterAnimation() {
     if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
