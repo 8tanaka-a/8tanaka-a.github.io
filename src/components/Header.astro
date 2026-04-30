@@ -116,11 +116,30 @@ const { available = true } = Astro.props;
     padding-top: 2rem;
   }
 
+  @media (max-width: 768px) {
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      grid-template-columns: 1fr auto;
+      padding: 1.5rem 0.75rem 0.75rem;
+      background-color: var(--color-bg);
+      z-index: 60;
+    }
+  }
+
   .header-logo {
     grid-column: 1 / 4;
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
+  }
+
+  @media (max-width: 768px) {
+    .header-logo {
+      grid-column: 1;
+    }
   }
 
   .logo {
@@ -151,11 +170,22 @@ const { available = true } = Astro.props;
     color: var(--color-text);
   }
 
+  .status-value {
+    margin-right: 1rem;
+  }
+
   .status-indicator {
     display: inline-flex;
     align-items: center;
     gap: 0.8rem;
-    margin: 0 0 0 1rem;
+  }
+
+  /* 狭い SP で status が幅オーバーした時に改行できるように */
+  @media (max-width: 768px) {
+    .status {
+      flex-wrap: wrap;
+      row-gap: 0.25rem;
+    }
   }
 
   .status-dot {
@@ -194,6 +224,16 @@ const { available = true } = Astro.props;
 
   .github-link:hover {
     opacity: 0.7;
+  }
+
+  @media (max-width: 768px) {
+    .header-nav {
+      grid-column: 2;
+    }
+
+    .github-link {
+      display: none;
+    }
   }
 
   .menu-button {

@@ -205,8 +205,12 @@ const highlightSet = new Set(highlightedCells.map(([c, r]) => `${c},${r}`));
   }
 
   // 初期化 + View Transitions 対応
+  // 表示中の DotGrid のみ初期化（SP の Top は display: none なのでスキップされる）
   function init() {
-    document.querySelectorAll<HTMLElement>('.dot-grid').forEach(initDotGrid);
+    document.querySelectorAll<HTMLElement>('.dot-grid').forEach((el) => {
+      if (el.offsetParent === null) return;
+      initDotGrid(el);
+    });
   }
 
   init();
@@ -217,6 +221,12 @@ const highlightSet = new Set(highlightedCells.map(([c, r]) => `${c},${r}`));
   .dot-grid {
     width: 100%;
     view-transition-name: dot-grid;
+  }
+
+  @media (max-width: 768px) {
+    .dot-grid {
+      view-transition-name: none;
+    }
   }
 
   .dot-grid-svg {
