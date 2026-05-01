@@ -147,8 +147,10 @@ const highlightSet = new Set(highlightedCells.map(([c, r]) => `${c},${r}`));
       .getPropertyValue('--color-dot')
       .trim();
 
-    // ハイライト対象のドットを最初はグレーにする
+    // ハイライト対象のドットを最初はグレーにする。
+    // 後でテーマ切替時に対象ドットを特定できるよう data-symbol を残す。
     highlightedDots.forEach((dot) => {
+      dot.dataset.symbol = 'true';
       dot.style.fill = dotColor;
       dot.classList.remove('highlighted');
     });
@@ -213,8 +215,30 @@ const highlightSet = new Set(highlightedCells.map(([c, r]) => `${c},${r}`));
     });
   }
 
+  // テーマ切替時、init() 中に書き込まれたインライン fill を新テーマの色に書き換える。
+  // 通常ドットは removeProperty で CSS 変数に戻し、シンボル(data-symbol)は新アクセント色に直接書く。
+  function updateDotsForCurrentTheme() {
+    document.querySelectorAll<HTMLElement>('.dot-grid').forEach((container) => {
+      if (container.offsetParent === null) return;
+      const accentVar = container.dataset.accent || '--color-accent-orange';
+      const accentColor = getComputedStyle(document.documentElement)
+        .getPropertyValue(accentVar)
+        .trim();
+      const allDots = Array.from(container.querySelectorAll<SVGRectElement>('.dot'));
+      gsap.killTweensOf(allDots);
+      allDots.forEach((dot) => {
+        if (dot.dataset.symbol === 'true') {
+          dot.style.fill = accentColor;
+        } else {
+          dot.style.removeProperty('fill');
+        }
+      });
+    });
+  }
+
   init();
   document.addEventListener('astro:after-swap', init);
+  document.addEventListener('theme:change', updateDotsForCurrentTheme);
 </script>
 
 <style>

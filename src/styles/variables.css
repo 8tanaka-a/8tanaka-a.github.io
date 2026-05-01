@@ -1,19 +1,13 @@
 :root {
-  /* Colors - Light */
+  /* Colors - Light (default) */
   --color-bg: #ececec;
   --color-text: #1a1a1a;
   --color-text-secondary: #4a4a4a;
   --color-gray: #4a4a4a;
-  --color-accent-orange: #d85a30;
-  --color-accent-blue: #4a6ba5;
-  --color-accent-green: #4a7c4e;
+  --color-accent-orange: #b84020;
+  --color-accent-blue: #3f5f94;
+  --color-accent-green: #3f6d43;
   --color-dot: #e3e2e1;
-
-  /* TODO: ダークモードのカラーは後日決定 */
-  /*
-  @media (prefers-color-scheme: dark) {
-  }
-  */
 
   /* Fonts */
   --font-geo: 'Geo', sans-serif;
@@ -33,6 +27,18 @@
 
   /* Stacked layout (タブレット+SP共通の縦積みレイアウト時の固定ヘッダー高さ) */
   --header-height-stacked: 6.5rem;
+}
+
+/* Colors - Dark (html[data-theme="dark"] が付いている時のみ適用) */
+:root[data-theme='dark'] {
+  --color-bg: #1a1a1a;
+  --color-text: #ececec;
+  --color-text-secondary: #b8b8b8;
+  --color-gray: #b8b8b8;
+  --color-accent-orange: #e8704a;
+  --color-accent-blue: #7c92c4;
+  --color-accent-green: #6a9c6e;
+  --color-dot: #2a2a2a;
 }
 
 /* status が改行する狭い SP では header 高さを底上げ */
