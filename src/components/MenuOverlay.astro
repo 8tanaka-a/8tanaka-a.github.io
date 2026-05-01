@@ -1,7 +1,6 @@
 ---
-import { Image } from 'astro:assets';
-import lightSvg from '../assets/svg/light.svg';
-import darkSvg from '../assets/svg/dark.svg';
+import lightSvgUrl from '../assets/svg/light.svg?url';
+import darkSvgUrl from '../assets/svg/dark.svg?url';
 
 const items = [
   { label: 'Top', href: '/', accent: '--color-text' },
@@ -43,11 +42,25 @@ const items = [
     </ul>
 
     <div class="theme-toggle" role="group" aria-label="テーマ切替">
-      <button type="button" class="theme-button is-active" aria-pressed="true" data-theme="light">
-        <Image src={lightSvg} alt="ライトモード" class="theme-icon" loading="eager" />
+      <button
+        type="button"
+        class="theme-button is-active"
+        aria-pressed="true"
+        aria-label="ライトモード"
+        data-theme="light"
+      >
+        <span class="theme-icon" style={`--icon-url: url("${lightSvgUrl}")`} aria-hidden="true"
+        ></span>
       </button>
-      <button type="button" class="theme-button" aria-pressed="false" data-theme="dark">
-        <Image src={darkSvg} alt="ダークモード" class="theme-icon" loading="eager" />
+      <button
+        type="button"
+        class="theme-button"
+        aria-pressed="false"
+        aria-label="ダークモード"
+        data-theme="dark"
+      >
+        <span class="theme-icon" style={`--icon-url: url("${darkSvgUrl}")`} aria-hidden="true"
+        ></span>
       </button>
     </div>
   </nav>
@@ -59,8 +72,60 @@ const items = [
 
   const OPEN_EVENT = 'menu:open';
   const CLOSE_EVENT = 'menu:close';
+  const THEME_STORAGE_KEY = 'theme';
 
+  type Theme = 'light' | 'dark';
   type WindowFlag = Window & { __menuNavigating?: boolean };
+
+  function getCurrentTheme(): Theme {
+    return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+  }
+
+  function applyTheme(theme: Theme) {
+    document.documentElement.dataset.theme = theme;
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', theme === 'dark' ? '#1a1a1a' : '#ececec');
+  }
+
+  function syncThemeButtons() {
+    const current = getCurrentTheme();
+    document.querySelectorAll<HTMLButtonElement>('.theme-button').forEach((btn) => {
+      const active = btn.dataset.theme === current;
+      btn.classList.toggle('is-active', active);
+      btn.setAttribute('aria-pressed', String(active));
+    });
+  }
+
+  function setTheme(theme: Theme) {
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
+    } catch {
+      /* localStorage 利用不可時は永続化スキップ */
+    }
+    applyTheme(theme);
+    syncThemeButtons();
+    // 他コンポーネント (DotGrid 等) がインライン色をリフレッシュするためのフック
+    document.dispatchEvent(new CustomEvent('theme:change', { detail: { theme } }));
+  }
+
+  // テーマ自体の再適用は BaseLayout の inline script が行う (リスナー登録順の都合で
+  // DotGrid 等よりも先に走らせる必要があるため)。ここではボタンの選択状態だけ同期する。
+  document.addEventListener('astro:after-swap', syncThemeButtons);
+
+  // ユーザーが明示的に選択していない時はシステム設定の変化に追従する
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    let stored: string | null = null;
+    try {
+      stored = localStorage.getItem(THEME_STORAGE_KEY);
+    } catch {
+      /* localStorage 利用不可時はシステム追従 */
+    }
+    if (stored === 'light' || stored === 'dark') return;
+    const theme: Theme = e.matches ? 'dark' : 'light';
+    applyTheme(theme);
+    syncThemeButtons();
+    document.dispatchEvent(new CustomEvent('theme:change', { detail: { theme } }));
+  });
 
   function init() {
     const overlay = document.querySelector<HTMLElement>('[data-menu-overlay]');
@@ -178,17 +243,15 @@ const items = [
       });
     });
 
-    // TODO: テーマ切替ロジックは後日実装。今は見た目の選択状態のみトグル。
     const themeButtons = Array.from(overlay.querySelectorAll<HTMLButtonElement>('.theme-button'));
     themeButtons.forEach((btn) => {
       btn.addEventListener('click', () => {
-        themeButtons.forEach((b) => {
-          const active = b === btn;
-          b.classList.toggle('is-active', active);
-          b.setAttribute('aria-pressed', String(active));
-        });
+        const theme: Theme = btn.dataset.theme === 'dark' ? 'dark' : 'light';
+        setTheme(theme);
       });
     });
+    // 初期表示: 現在の data-theme に合わせてボタンの選択状態を同期
+    syncThemeButtons();
   }
 
   init();
@@ -334,5 +397,14 @@ const items = [
     display: block;
     width: 1.75rem;
     height: 1.75rem;
+    background-image: var(--icon-url);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  /* SVG の fill は #1A1A1A 固定。ダーク時のみ反転して --color-text 相当の明色にする */
+  :root[data-theme='dark'] .theme-icon {
+    filter: invert(1);
   }
 </style>

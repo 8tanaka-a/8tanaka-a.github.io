@@ -24,6 +24,31 @@ const { title, description = 'one code - Frontend Engineer Portfolio' } = Astro.
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <title>{title}</title>
+    <script is:inline>
+      // テーマ反映 (FOUC 防止 + ページ遷移後の再適用)。
+      // head のインラインスクリプトは body のバンドル script より先に登録されるため、
+      // astro:after-swap でも DotGrid 等の他コンポーネントより先に走り、
+      // CSS 変数 (--color-dot 等) を確定させてから他の init が読み取れる。
+      (function () {
+        function resolveTheme() {
+          try {
+            const stored = localStorage.getItem('theme');
+            if (stored === 'light' || stored === 'dark') return stored;
+          } catch {
+            /* localStorage 利用不可時はシステム追従 */
+          }
+          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        function applyTheme() {
+          const theme = resolveTheme();
+          document.documentElement.dataset.theme = theme;
+          const meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', theme === 'dark' ? '#1a1a1a' : '#ececec');
+        }
+        applyTheme();
+        document.addEventListener('astro:after-swap', applyTheme);
+      })();
+    </script>
     <ClientRouter />
   </head>
   <body>
