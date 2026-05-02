@@ -1,43 +1,31 @@
-# Astro Starter Kit: Minimal
+# one code — Portfolio
 
-```sh
-pnpm create astro@latest -- --template minimal
-```
+フリーランスのフロントエンドエンジニア「one code」のポートフォリオサイトです。
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+<!-- TODO: リポ名確定後にライブURLを記載 -->
+<!-- Live: https://example.com -->
 
-## 🚀 Project Structure
+## 意識したこと
 
-Inside of your Astro project, you'll see the following folders and files:
+- **グリッドレイアウトで構成する** — PC / タブレット / SP すべてのブレイクポイントで、一貫した整列をどこまで保てるかを試した
+- **AI駆動開発でどこまで作り切れるか試す** — 設計・実装・レビューを AI と分担しながら進めた
+- **Astro を使ってみる** — SSG / Content Collections / View Transitions の手触りを確かめたかった
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+## Tech Stack
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+- **Framework**: Astro (SSG, 完全静的)
+- **Hosting**: GitHub Pages
+- **Articles**: Astro Content Collections (Markdown + Zod スキーマ)
+- **Animation**: GSAP
+- **Page Transitions**: Astro View Transitions
+- **Styling**: vanilla CSS (Astro scoped)
+- **Fonts**: Geo / Space Mono / Noto Sans JP
+- **Language**: TypeScript
+- **Package Manager**: pnpm
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+## License
 
-Any static assets, like images, can be placed in the `public/` directory.
+All Rights Reserved.
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                | Action                                           |
-| :--------------------- | :----------------------------------------------- |
-| `pnpm install`         | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+このリポジトリに含まれるコード・文章・画像の無断転載・改変・再配布を禁じます。
+閲覧目的でのみ公開しています。
