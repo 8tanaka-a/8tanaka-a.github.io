@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import DotGrid from '../components/DotGrid.astro';
 import arrowSvgUrl from '../assets/svg/arrow.svg?url';
+import { works } from '../data/works';
 
 /** トップページのハイライトパターン（"=>" 矢印） */
 const highlightedCells: [number, number][] = [
@@ -50,14 +51,6 @@ const animationSequence: [number, number][][] = [
   ],
 ];
 
-/** ダミーデータ */
-const works = [
-  { number: '01', name: 'クレジット管理システム', href: '/works/01' },
-  { number: '02', name: '勤怠管理システム', href: '/works/02' },
-  { number: '03', name: 'イベントメディアサイト', href: '/works/03' },
-  { number: '04', name: 'イベント情報サイト', href: '/works/04' },
-];
-
 const notesEntries = (await getCollection('notes', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.getTime() - a.data.date.getTime(),
 );
@@ -97,10 +90,10 @@ const notes = notesEntries.map((entry) => ({
       <div class="carousel works-carousel">
         {
           works.map((work, i) => (
-            <a href={work.href} class={`card work-card work-${i + 1}`}>
+            <a href={`/works/${work.slug}`} class={`card work-card work-${i + 1}`}>
               <span class="card-text">
                 <span class="work-number">{work.number}</span>
-                <span class="work-name">{work.name}</span>
+                <span class="work-name">{work.title}</span>
               </span>
             </a>
           ))
