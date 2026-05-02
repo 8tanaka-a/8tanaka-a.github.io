@@ -35,7 +35,10 @@ const breadcrumbs = [
 ];
 ---
 
-<BaseLayout title={`${note.data.title} | one code`}>
+<BaseLayout
+  title={`${note.data.title} | one code`}
+  description={note.data.description ?? `${note.data.title} - one code の記事。`}
+>
   <main id="main" class="notes-main">
     <div class="dot-grid-area">
       <DotGrid

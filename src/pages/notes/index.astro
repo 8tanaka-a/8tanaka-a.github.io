@@ -14,7 +14,10 @@ const notes = (await getCollection('notes', ({ data }) => !data.draft)).sort(
 const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Notes' }];
 ---
 
-<BaseLayout title="Notes | one code">
+<BaseLayout
+  title="Notes | one code"
+  description="技術や開発に関する考えを綴った one code の記事一覧。"
+>
   <main id="main" class="notes-list-main">
     <div class="dot-grid-area">
       <DotGrid
