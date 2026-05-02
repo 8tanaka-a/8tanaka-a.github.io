@@ -25,22 +25,20 @@ const { title, description = 'one code - Frontend Engineer Portfolio' } = Astro.
     <meta property="og:type" content="website" />
     <title>{title}</title>
     <script is:inline>
-      // テーマ反映 (FOUC 防止 + ページ遷移後の再適用)。
-      // head のインラインスクリプトは body のバンドル script より先に登録されるため、
-      // astro:after-swap でも DotGrid 等の他コンポーネントより先に走り、
-      // CSS 変数 (--color-dot 等) を確定させてから他の init が読み取れる。
+      // テーマ反映 (FOUC 防止)。永続化はせずセッション中だけ手動切替を許す方針:
+      //   - 初回ロード: OS設定を反映
+      //   - 手動切替後: window.__themeChoice に保持。ClientRouter で <html> の
+      //     data-theme は遷移時に消えるため、毎遷移ここで再適用する
+      //   - リロード/新規タブ: window が破棄されるので OS設定に戻る
       (function () {
-        function resolveTheme() {
-          try {
-            const stored = localStorage.getItem('theme');
-            if (stored === 'light' || stored === 'dark') return stored;
-          } catch {
-            /* localStorage 利用不可時はシステム追従 */
-          }
-          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        }
         function applyTheme() {
-          const theme = resolveTheme();
+          const choice = window.__themeChoice;
+          const theme =
+            choice === 'light' || choice === 'dark'
+              ? choice
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
           document.documentElement.dataset.theme = theme;
           const meta = document.querySelector('meta[name="theme-color"]');
           if (meta) meta.setAttribute('content', theme === 'dark' ? '#1a1a1a' : '#ececec');

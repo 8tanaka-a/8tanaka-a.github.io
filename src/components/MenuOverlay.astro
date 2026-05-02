@@ -72,10 +72,12 @@ const items = [
 
   const OPEN_EVENT = 'menu:open';
   const CLOSE_EVENT = 'menu:close';
-  const THEME_STORAGE_KEY = 'theme';
 
   type Theme = 'light' | 'dark';
-  type WindowFlag = Window & { __menuNavigating?: boolean };
+  type WindowFlag = Window & { __menuNavigating?: boolean; __themeChoice?: Theme };
+
+  // ユーザーがこのセッションで明示的にテーマを選んだか。永続化はしない (リロードで OS設定に戻る)。
+  let manualOverride = false;
 
   function getCurrentTheme(): Theme {
     return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
@@ -97,11 +99,9 @@ const items = [
   }
 
   function setTheme(theme: Theme) {
-    try {
-      localStorage.setItem(THEME_STORAGE_KEY, theme);
-    } catch {
-      /* localStorage 利用不可時は永続化スキップ */
-    }
+    manualOverride = true;
+    // BaseLayout の inline script が遷移時に読み取り、data-theme を再適用する
+    (window as WindowFlag).__themeChoice = theme;
     applyTheme(theme);
     syncThemeButtons();
     // 他コンポーネント (DotGrid 等) がインライン色をリフレッシュするためのフック
@@ -114,13 +114,7 @@ const items = [
 
   // ユーザーが明示的に選択していない時はシステム設定の変化に追従する
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-    let stored: string | null = null;
-    try {
-      stored = localStorage.getItem(THEME_STORAGE_KEY);
-    } catch {
-      /* localStorage 利用不可時はシステム追従 */
-    }
-    if (stored === 'light' || stored === 'dark') return;
+    if (manualOverride) return;
     const theme: Theme = e.matches ? 'dark' : 'light';
     applyTheme(theme);
     syncThemeButtons();
