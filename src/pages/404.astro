@@ -1,0 +1,185 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import DotGrid from '../components/DotGrid.astro';
+import { dotPatterns } from '../data/dot-patterns';
+
+const pattern = dotPatterns.exclamation;
+---
+
+<BaseLayout title="404 | one code">
+  <main id="main" class="not-found-main">
+    <div class="dot-grid-area">
+      <DotGrid
+        highlightedCells={pattern.highlightedCells}
+        animationSequence={pattern.animationSequence}
+        staggerInterval={pattern.staggerInterval}
+      />
+    </div>
+
+    <div class="head">
+      <h2 class="number">404</h2>
+      <p class="message">お探しのページは見つかりませんでした。</p>
+    </div>
+
+    <div class="back-area">
+      <a href="/" class="back-link">← Top に戻る</a>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .not-found-main {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-template-rows: repeat(10, 1fr);
+    gap: 0.75rem;
+    padding-bottom: 2rem;
+  }
+
+  .dot-grid-area {
+    grid-column: 1 / 5;
+    grid-row: 1 / -1;
+    align-self: end;
+  }
+
+  .head {
+    grid-column: 6 / 11;
+    grid-row: 2 / 4;
+  }
+
+  .number {
+    font-family: var(--font-mono);
+    font-size: 2.25rem; /* 36px */
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .message {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.75;
+    letter-spacing: 0.08em;
+    color: var(--color-text);
+    margin: 1rem 0 0;
+  }
+
+  .back-area {
+    grid-column: 9 / 11;
+    grid-row: 10;
+    align-self: end;
+    justify-self: end;
+  }
+
+  .back-link {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--color-text);
+    transition: color 0.2s;
+  }
+
+  .back-link:hover {
+    color: var(--color-accent-orange);
+  }
+
+  .back-link:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 1199px) {
+    .not-found-main {
+      grid-template-columns: 1fr;
+      grid-template-rows: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      padding-top: 3.25rem;
+      padding-bottom: 1rem;
+    }
+
+    .head {
+      order: 1;
+    }
+
+    .number {
+      font-size: 1.5rem; /* 24px */
+    }
+
+    .dot-grid-area {
+      order: 2;
+      align-self: end;
+      width: 50vw;
+      margin-bottom: 2.5rem;
+    }
+
+    .back-area {
+      order: 3;
+      align-self: end;
+      margin-top: 2rem;
+    }
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+
+  const isStacked = () => window.matchMedia('(max-width: 1199px)').matches;
+
+  function enterAnimation() {
+    if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
+    if (isStacked()) return;
+    const targets = ['.number', '.message', '.back-area'];
+    const elements = targets.map((sel) => document.querySelector(sel)).filter((el) => el !== null);
+    if (elements.length === 0) return;
+
+    gsap.set(elements, { opacity: 0, y: 16 });
+    gsap.to(elements, {
+      opacity: 1,
+      y: 0,
+      duration: 0.4,
+      stagger: 0.08,
+      ease: 'power2.out',
+      delay: 0.15,
+    });
+  }
+
+  function setupExitAnimation() {
+    document.addEventListener('astro:before-preparation', (e) => {
+      if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
+      if (isStacked()) return;
+      const main = document.querySelector('.not-found-main');
+      if (!main || !('loader' in e)) return;
+
+      const targets = ['.back-area', '.message', '.number'];
+      const elements = targets.map((sel) => main.querySelector(sel)).filter((el) => el !== null);
+
+      if (elements.length === 0) return;
+
+      const event = e as Event & { loader: () => Promise<void> };
+      const originalLoader = event.loader;
+      event.loader = async () => {
+        await Promise.all([
+          originalLoader(),
+          new Promise<void>((resolve) => {
+            gsap.to(elements, {
+              opacity: 0,
+              y: 10,
+              duration: 0.2,
+              stagger: 0.02,
+              ease: 'power2.in',
+              onComplete: resolve,
+            });
+          }),
+        ]);
+      };
+    });
+  }
+
+  enterAnimation();
+  setupExitAnimation();
+  document.addEventListener('astro:after-swap', enterAnimation);
+</script>

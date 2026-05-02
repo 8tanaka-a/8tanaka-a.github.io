@@ -395,6 +395,20 @@ const question: DotPatternData = {
   ],
 };
 
+/** 404: ! (エクスクラメーション) */
+const exclamation: DotPatternData = {
+  staggerInterval: 0.06,
+  highlightedCells: [
+    [4, 2],
+    [4, 3],
+    [4, 4],
+    [4, 5],
+    [4, 6],
+    [4, 8],
+  ],
+  animationSequence: [[[4, 2]], [[4, 3]], [[4, 4]], [[4, 5]], [[4, 6]], [[4, 8]]],
+};
+
 export const dotPatterns: Record<string, DotPatternData> = {
   ai,
   code,
@@ -402,4 +416,5 @@ export const dotPatterns: Record<string, DotPatternData> = {
   notes1,
   hash,
   question,
+  exclamation,
 };
