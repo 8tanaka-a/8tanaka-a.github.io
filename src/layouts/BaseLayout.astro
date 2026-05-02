@@ -87,8 +87,8 @@ const { title, description = 'one code - Frontend Engineer Portfolio' } = Astro.
 
   @media (max-width: 1199px) {
     .grid-container {
-      grid-template-columns: 1fr;
-      padding-top: var(--header-height-stacked);
+      display: block;
+      padding-top: calc(var(--header-height-stacked) + 1rem);
       padding-bottom: 4rem; /* 64px */
     }
   }
