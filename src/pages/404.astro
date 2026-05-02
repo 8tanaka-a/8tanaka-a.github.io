@@ -1,77 +1,34 @@
 ---
-import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
-import { getCollection, render } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import DotGrid from '../../components/DotGrid.astro';
-import Breadcrumb from '../../components/Breadcrumb.astro';
-import { dotPatterns } from '../../data/dot-patterns';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import DotGrid from '../components/DotGrid.astro';
+import { dotPatterns } from '../data/dot-patterns';
 
-export const getStaticPaths = (async () => {
-  const notes = await getCollection('notes', ({ data }) => !data.draft);
-  return notes.map((note, i) => ({
-    params: { slug: note.id },
-    props: { note, index: i },
-  }));
-}) satisfies GetStaticPaths;
-
-type Props = InferGetStaticPropsType<typeof getStaticPaths>;
-const { note, index } = Astro.props as Props;
-const { Content } = await render(note);
-
-const number = String(index + 1).padStart(2, '0');
-const dateStr = new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit' })
-  .format(note.data.date)
-  .replace('-', '.');
-
-const pattern = dotPatterns[note.data.dotPattern] ?? {
-  highlightedCells: [],
-  animationSequence: [],
-};
-
-const breadcrumbs = [
-  { label: 'Top', href: '/' },
-  { label: 'Notes', href: '/notes' },
-  { label: number },
-];
+const pattern = dotPatterns.exclamation;
 ---
 
-<BaseLayout
-  title={`${note.data.title} | one code`}
-  description={note.data.description ?? `${note.data.title} - one code の記事。`}
->
-  <main id="main" class="notes-main">
+<BaseLayout title="404 | one code" description="お探しのページは見つかりませんでした。">
+  <main id="main" class="not-found-main">
     <div class="dot-grid-area">
       <DotGrid
         highlightedCells={pattern.highlightedCells}
         animationSequence={pattern.animationSequence}
-        accentColor="--color-accent-green"
         staggerInterval={pattern.staggerInterval}
       />
     </div>
 
-    <div class="note-head">
-      <h2 class="note-heading">
-        <span class="note-number">{number}</span>
-        <span class="note-title">{note.data.title}</span>
-      </h2>
-
-      <p class="note-date">{dateStr}</p>
+    <div class="head">
+      <h2 class="number">404</h2>
+      <p class="message">お探しのページは見つかりませんでした。</p>
     </div>
 
-    <div class="note-body-wrap">
-      <div class="note-body">
-        <Content />
-      </div>
-    </div>
-
-    <div class="breadcrumb-area">
-      <Breadcrumb items={breadcrumbs} accentColor="--color-accent-green" />
+    <div class="back-area">
+      <a href="/" class="back-link">← Top に戻る</a>
     </div>
   </main>
 </BaseLayout>
 
 <style>
-  .notes-main {
+  .not-found-main {
     grid-column: 1 / -1;
     grid-row: 2;
     display: grid;
@@ -87,65 +44,54 @@ const breadcrumbs = [
     align-self: end;
   }
 
-  .note-head {
+  .head {
     grid-column: 6 / 11;
     grid-row: 2 / 4;
   }
 
-  .note-body-wrap {
-    grid-column: 6 / 11;
-    grid-row: 4 / 9;
-  }
-
-  .note-heading {
-    display: flex;
-    gap: 1rem;
-    font-family: var(--font-sans);
-    font-size: 2.25rem;
+  .number {
+    font-family: var(--font-mono);
+    font-size: 2.25rem; /* 36px */
     font-weight: 500;
     line-height: 1.2;
     color: var(--color-text);
     margin: 0;
   }
 
-  .note-number {
-    font-family: var(--font-mono);
-  }
-
-  .note-date {
-    font-family: var(--font-mono);
-    font-size: 0.875rem;
-    color: var(--color-text);
-    margin: 0.5rem 0 0;
-  }
-
-  .note-body {
-    margin: 0;
-  }
-
-  .note-body :global(p) {
+  .message {
     font-family: var(--font-sans);
     font-size: 1rem;
     line-height: 1.75;
     letter-spacing: 0.08em;
-    white-space: pre-line;
     color: var(--color-text);
-    margin: 0 0 1.25rem;
+    margin: 1rem 0 0;
   }
 
-  .note-body :global(p:last-child) {
-    margin-bottom: 0;
-  }
-
-  .breadcrumb-area {
+  .back-area {
     grid-column: 9 / 11;
     grid-row: 10;
     align-self: end;
     justify-self: end;
   }
 
+  .back-link {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--color-text);
+    transition: opacity 0.2s;
+  }
+
+  .back-link:hover {
+    opacity: 0.7;
+  }
+
+  .back-link:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+  }
+
   @media (max-width: 1199px) {
-    .notes-main {
+    .not-found-main {
       grid-template-columns: 1fr;
       grid-template-rows: none;
       display: flex;
@@ -154,11 +100,11 @@ const breadcrumbs = [
       padding-bottom: 1rem;
     }
 
-    .note-head {
+    .head {
       order: 1;
     }
 
-    .note-heading {
+    .number {
       font-size: 1.5rem; /* 24px */
     }
 
@@ -169,12 +115,8 @@ const breadcrumbs = [
       margin-bottom: 2.5rem;
     }
 
-    .note-body-wrap {
+    .back-area {
       order: 3;
-    }
-
-    .breadcrumb-area {
-      order: 4;
       align-self: end;
       margin-top: 2rem;
     }
@@ -189,7 +131,7 @@ const breadcrumbs = [
   function enterAnimation() {
     if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
     if (isStacked()) return;
-    const targets = ['.note-heading', '.note-date', '.note-body', '.breadcrumb-area'];
+    const targets = ['.number', '.message', '.back-area'];
     const elements = targets.map((sel) => document.querySelector(sel)).filter((el) => el !== null);
     if (elements.length === 0) return;
 
@@ -197,10 +139,10 @@ const breadcrumbs = [
     gsap.to(elements, {
       opacity: 1,
       y: 0,
-      duration: 0.25,
-      stagger: 0.05,
+      duration: 0.4,
+      stagger: 0.08,
       ease: 'power2.out',
-      delay: 0.1,
+      delay: 0.15,
     });
   }
 
@@ -208,10 +150,10 @@ const breadcrumbs = [
     document.addEventListener('astro:before-preparation', (e) => {
       if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
       if (isStacked()) return;
-      const main = document.querySelector('.notes-main');
+      const main = document.querySelector('.not-found-main');
       if (!main || !('loader' in e)) return;
 
-      const targets = ['.breadcrumb-area', '.note-body', '.note-date', '.note-heading'];
+      const targets = ['.back-area', '.message', '.number'];
       const elements = targets.map((sel) => main.querySelector(sel)).filter((el) => el !== null);
 
       if (elements.length === 0) return;

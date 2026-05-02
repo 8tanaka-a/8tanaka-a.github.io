@@ -23,7 +23,10 @@ const { highlightedCells, animationSequence } = pattern;
 const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
 ---
 
-<BaseLayout title={`${work.number} ${work.title} | one code`}>
+<BaseLayout
+  title={`${work.number} ${work.title} | one code`}
+  description="フリーランスフロントエンドエンジニア「one code」の実績紹介。"
+>
   <main id="main" class="works-main">
     <div class="dot-grid-area">
       <DotGrid
@@ -228,7 +231,6 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
-      padding-top: 3.25rem;
       padding-bottom: 1rem;
     }
 
