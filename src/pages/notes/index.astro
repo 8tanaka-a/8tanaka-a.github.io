@@ -176,6 +176,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Notes' }];
   function enterAnimation() {
     if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
     if (isStacked()) return;
+    if (!document.querySelector('.notes-list-main')) return;
     const elements = [
       document.querySelector('.notes-page-title'),
       ...Array.from(document.querySelectorAll('.note-card')),

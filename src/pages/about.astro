@@ -221,6 +221,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'About' }];
   function enterAnimation() {
     if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
     if (isStacked()) return;
+    if (!document.querySelector('.about-main')) return;
     const targets = ['.about-role', '.about-lead', '.about-body', '.breadcrumb-area'];
     const elements = targets.map((sel) => document.querySelector(sel)).filter((el) => el !== null);
     if (elements.length === 0) return;
