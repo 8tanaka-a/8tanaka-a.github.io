@@ -281,12 +281,6 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
   const isStacked = () => window.matchMedia('(max-width: 1199px)').matches;
 
   function enterAnimation() {
-    // DEBUG
-    console.log('[works enter]', performance.now().toFixed(0), {
-      menuNavigating: (window as Window & { __menuNavigating?: boolean }).__menuNavigating,
-      isStacked: isStacked(),
-      hasMain: !!document.querySelector('.works-main'),
-    });
     if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
     if (isStacked()) return;
     if (!document.querySelector('.works-main')) return;
