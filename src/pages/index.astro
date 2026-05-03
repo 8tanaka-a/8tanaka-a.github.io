@@ -232,12 +232,14 @@ const notes = notesEntries.map((entry) => ({
     transition: opacity 0.3s;
   }
 
-  .card:hover::after {
-    opacity: 1;
-  }
+  @media (hover: hover) {
+    .card:hover::after {
+      opacity: 1;
+    }
 
-  .card:hover {
-    color: var(--color-bg);
+    .card:hover {
+      color: var(--color-bg);
+    }
   }
 
   .card:focus-visible {
@@ -257,8 +259,10 @@ const notes = notesEntries.map((entry) => ({
   }
 
   /* --- Works (2列 × 2行) --- */
-  .work-card:hover {
-    background-color: var(--color-accent-blue);
+  @media (hover: hover) {
+    .work-card:hover {
+      background-color: var(--color-accent-blue);
+    }
   }
 
   .work-card {
@@ -289,8 +293,10 @@ const notes = notesEntries.map((entry) => ({
   }
 
   /* --- About (2列 × 4行) --- */
-  .about-card:hover {
-    background-color: var(--color-accent-orange);
+  @media (hover: hover) {
+    .about-card:hover {
+      background-color: var(--color-accent-orange);
+    }
   }
 
   .about-card {
@@ -309,8 +315,10 @@ const notes = notesEntries.map((entry) => ({
   }
 
   /* --- Notes (2列 × 3行) --- */
-  .note-card:hover {
-    background-color: var(--color-accent-green);
+  @media (hover: hover) {
+    .note-card:hover {
+      background-color: var(--color-accent-green);
+    }
   }
 
   .note-card {

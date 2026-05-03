@@ -211,9 +211,11 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
       color 0.3s;
   }
 
-  .works-nav-card:hover {
-    background-color: var(--color-accent-blue);
-    color: var(--color-bg);
+  @media (hover: hover) {
+    .works-nav-card:hover {
+      background-color: var(--color-accent-blue);
+      color: var(--color-bg);
+    }
   }
 
   .works-nav-card:focus-visible {
@@ -286,6 +288,18 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
       order: 5;
       align-self: end;
       margin-top: 0;
+    }
+  }
+
+  /*
+    SP では Markdown 内の単一改行 (pre-line で <br> 化) が
+    狭幅の自動折返しと衝突して句点で人為改行が出てしまうため、
+    通常の white-space に戻して自動折返しに任せる。
+    段落区切り (\n\n) は別 <p> になるので影響なし。
+  */
+  @media (max-width: 767px) {
+    .work-body p {
+      white-space: normal;
     }
   }
 </style>
