@@ -260,6 +260,7 @@ const items = [
     background-color: var(--color-bg);
     pointer-events: none;
     opacity: 0;
+    overflow-y: auto;
   }
 
   .overlay.is-open {
@@ -269,7 +270,7 @@ const items = [
 
   .menu {
     max-width: 1600px;
-    height: 100%;
+    min-height: 100%;
     margin-inline: auto;
     padding: 8rem 2rem 2rem;
     display: grid;
@@ -293,15 +294,17 @@ const items = [
     display: none;
   }
 
+  /*
+    タブレット/SP では rigid な 10 行 grid をやめて flex-column に切替。
+    menu-list はカード分の自然サイズで縦に詰まり、theme-toggle は
+    margin-top: auto で下端に押し付ける。これで小型 SP でも縦溢れしない。
+  */
   @media (max-width: 1199px) {
     .menu {
+      display: flex;
+      flex-direction: column;
       padding: calc(var(--header-height-stacked) + 1rem) 2rem 1rem;
-      grid-template-columns: 1fr;
-    }
-
-    .menu-list {
-      grid-column: 1;
-      grid-row: 1 / 9;
+      gap: 0.75rem;
     }
   }
 
@@ -354,8 +357,10 @@ const items = [
 
   @media (max-width: 1199px) {
     .theme-toggle {
-      grid-column: 1;
-      grid-row: 10;
+      /* 親が flex-column になるので grid 配置は無効。下端右寄せに変更 */
+      margin-top: auto;
+      align-self: flex-end;
+      justify-self: auto;
     }
   }
 
