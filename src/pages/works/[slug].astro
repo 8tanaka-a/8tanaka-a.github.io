@@ -283,6 +283,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
   function enterAnimation() {
     if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
     if (isStacked()) return;
+    if (!document.querySelector('.works-main')) return;
     const targets = [
       '.works-page-title',
       '.work-heading',

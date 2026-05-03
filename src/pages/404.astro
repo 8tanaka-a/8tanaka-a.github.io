@@ -131,6 +131,7 @@ const pattern = dotPatterns.exclamation;
   function enterAnimation() {
     if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
     if (isStacked()) return;
+    if (!document.querySelector('.not-found-main')) return;
     const targets = ['.number', '.message', '.back-area'];
     const elements = targets.map((sel) => document.querySelector(sel)).filter((el) => el !== null);
     if (elements.length === 0) return;
