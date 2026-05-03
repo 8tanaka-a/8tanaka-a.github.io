@@ -59,3 +59,16 @@ a {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
+
+/*
+  ClientRouter のページ遷移時、ブラウザ標準の View Transitions API は
+  view-transition-name を持たない全要素を root にまとめてクロスフェードする。
+  これに加えて GSAP の enterAnimation がフェードインを走らせると視覚的に
+  二重フェードになるため、root の自動フェードを無効化する。
+  名前付き transition (例: .dot-grid の view-transition-name: dot-grid) は
+  影響を受けず、これまで通り動作する。
+*/
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
