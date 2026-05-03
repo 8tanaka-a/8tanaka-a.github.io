@@ -119,9 +119,11 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Notes' }];
       color 0.3s;
   }
 
-  .note-card:hover {
-    background-color: var(--color-accent-green);
-    color: var(--color-bg);
+  @media (hover: hover) {
+    .note-card:hover {
+      background-color: var(--color-accent-green);
+      color: var(--color-bg);
+    }
   }
 
   .note-card:focus-visible {

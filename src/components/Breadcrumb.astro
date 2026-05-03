@@ -63,8 +63,10 @@ const { items, accentColor = '--color-accent-orange' } = Astro.props;
     transition: opacity 0.2s;
   }
 
-  .breadcrumb a:hover {
-    opacity: 0.7;
+  @media (hover: hover) {
+    .breadcrumb a:hover {
+      opacity: 0.7;
+    }
   }
 
   .breadcrumb a:focus-visible {
