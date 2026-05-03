@@ -515,6 +515,5 @@ const notes = notesEntries.map((entry) => ({
   }
 
   setupExitAnimation();
-  enterAnimation();
-  document.addEventListener('astro:after-swap', enterAnimation);
+  document.addEventListener('astro:page-load', enterAnimation);
 </script>

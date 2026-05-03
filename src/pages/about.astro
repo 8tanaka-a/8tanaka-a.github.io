@@ -269,7 +269,6 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'About' }];
     });
   }
 
-  enterAnimation();
   setupExitAnimation();
-  document.addEventListener('astro:after-swap', enterAnimation);
+  document.addEventListener('astro:page-load', enterAnimation);
 </script>
