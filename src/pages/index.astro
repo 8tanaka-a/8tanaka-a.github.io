@@ -496,7 +496,6 @@ const notes = notesEntries.map((entry) => ({
   }
 
   function enterAnimation() {
-    if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
     if (isStacked()) return;
     const main = document.querySelector('.top-main');
     if (!main) return;
@@ -517,6 +516,14 @@ const notes = notesEntries.map((entry) => ({
 
     const elements = targets.map((sel) => main.querySelector(sel)).filter((el) => el !== null);
     if (elements.length === 0) return;
+
+    // メニュー経由の遷移ではメニューのフェードアウトが視覚的な遷移なので
+    // GSAP のフェードインはスキップ。ただし CSS pre-hide で opacity:0 のままだと
+    // メニュー消失後に見えないので opacity:1 を直接当てて可視化する。
+    if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) {
+      gsap.set(elements, { opacity: 1, y: 0 });
+      return;
+    }
 
     gsap.set(elements, { opacity: 0, y: 16 });
     gsap.to(elements, {
