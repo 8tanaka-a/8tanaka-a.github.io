@@ -38,6 +38,24 @@ const ogImageUrl = new URL('/onecode.png', Astro.site).toString();
     <meta name="twitter:image" content={ogImageUrl} />
     <title>{title}</title>
     <script is:inline>
+      // DEBUG: page-load 発火カウント
+      (function () {
+        let n = 0;
+        document.addEventListener('astro:page-load', () => {
+          n += 1;
+          console.log(
+            '[page-load]',
+            'count=' + n,
+            'path=' + location.pathname,
+            'time=' + performance.now().toFixed(0),
+          );
+        });
+        document.addEventListener('astro:after-swap', () => {
+          console.log('[after-swap]', 'path=' + location.pathname);
+        });
+      })();
+    </script>
+    <script is:inline>
       // テーマ反映 (FOUC 防止)。永続化はせずセッション中だけ手動切替を許す方針:
       //   - 初回ロード: OS設定を反映
       //   - 手動切替後: window.__themeChoice に保持。ClientRouter で <html> の
