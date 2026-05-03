@@ -141,12 +141,19 @@ const pattern = dotPatterns.exclamation;
   const isStacked = () => window.matchMedia('(max-width: 1199px)').matches;
 
   function enterAnimation() {
-    if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
     if (isStacked()) return;
     if (!document.querySelector('.not-found-main')) return;
     const targets = ['.number', '.message', '.back-area'];
     const elements = targets.map((sel) => document.querySelector(sel)).filter((el) => el !== null);
     if (elements.length === 0) return;
+
+    // メニュー経由の遷移ではメニューのフェードアウトが視覚的な遷移なので
+    // GSAP のフェードインはスキップ。ただし CSS pre-hide で opacity:0 のままだと
+    // メニュー消失後に見えないので opacity:1 を直接当てて可視化する。
+    if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) {
+      gsap.set(elements, { opacity: 1, y: 0 });
+      return;
+    }
 
     gsap.set(elements, { opacity: 0, y: 16 });
     gsap.to(elements, {
