@@ -123,6 +123,21 @@ const notes = notesEntries.map((entry) => ({
 </BaseLayout>
 
 <style>
+  /*
+    PC レイアウトでは GSAP enter が opacity:0 → 1 でフェードインさせるため、
+    新ページ描画時に一瞬 opacity:1 でフラッシュしないよう CSS で初期非表示にする。
+  */
+  @media (min-width: 1200px) {
+    .about-title,
+    .about-card,
+    .works-title,
+    .work-card,
+    .notes-title,
+    .note-card {
+      opacity: 0;
+    }
+  }
+
   .top-main {
     grid-column: 1 / -1;
     grid-row: 2;
