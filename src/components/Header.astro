@@ -267,6 +267,11 @@ const { available = true } = Astro.props;
     }
   }
 
+  .menu-button:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+  }
+
   .menu-icon {
     position: relative;
     display: block;
