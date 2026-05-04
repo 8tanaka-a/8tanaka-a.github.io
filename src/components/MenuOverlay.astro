@@ -10,7 +10,7 @@ const items = [
 ];
 ---
 
-<div id="menu-overlay" class="overlay" data-menu-overlay aria-hidden="true">
+<div id="menu-overlay" class="overlay" data-menu-overlay aria-hidden="true" inert>
   <nav class="menu" aria-label="メインナビゲーション">
     <ul class="menu-list">
       {
@@ -141,6 +141,7 @@ const items = [
       if (isOpen) return;
       isOpen = true;
       overlay.setAttribute('aria-hidden', 'false');
+      overlay.removeAttribute('inert');
       overlay.classList.add('is-open');
       document.body.style.overflow = 'hidden';
 
@@ -160,6 +161,7 @@ const items = [
       if (!isOpen) return;
       isOpen = false;
       overlay.setAttribute('aria-hidden', 'true');
+      overlay.setAttribute('inert', '');
       document.body.style.overflow = '';
 
       gsap.killTweensOf(animatables);
@@ -222,6 +224,7 @@ const items = [
       if (!(window as WindowFlag).__menuNavigating || !isOpen) return;
       isOpen = false;
       overlay.setAttribute('aria-hidden', 'true');
+      overlay.setAttribute('inert', '');
       document.body.style.overflow = '';
       gsap.killTweensOf(animatables);
       gsap.to(animatables, {
