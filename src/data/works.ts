@@ -79,7 +79,7 @@ API設計もコンポーネント設計も、
     slug: '04',
     number: '04',
     title: 'イベント情報サイト',
-    period: '2024.12 - 2025.09',
+    period: '2024.09 - 2024.12',
     role: '技術選定 / 中間API・フロントエンド実装 / CI/CD構築',
     tech: 'TypeScript / Next.js / Node.js / Serverless Framework / microCMS / GitHub Actions',
     body: `基本はSSG、一部はリアルタイム性が必要だったのでCSRとし
