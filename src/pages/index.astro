@@ -433,6 +433,11 @@ const notes = notesEntries.map((entry) => ({
       grid-template-columns: none;
     }
 
+    /* タブレット帯で works 4件目以降を非表示にしているのを SP では戻す (4件全部スライダー表示) */
+    .work-card:nth-child(n + 4) {
+      display: flex;
+    }
+
     .carousel::-webkit-scrollbar {
       display: none;
     }
