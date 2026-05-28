@@ -409,6 +409,11 @@ const notes = notesEntries.map((entry) => ({
       display: none;
     }
 
+    /* タブレット・SP では notes を 4 件のみ表示 */
+    .note-card:nth-child(n + 5) {
+      display: none;
+    }
+
     .about-card {
       aspect-ratio: 4 / 1;
     }
