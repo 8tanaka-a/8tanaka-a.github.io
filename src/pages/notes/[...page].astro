@@ -1,15 +1,22 @@
 ---
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import DotGrid from '../../components/DotGrid.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import { dotPatterns } from '../../data/dot-patterns';
 
-const sigmaPattern = dotPatterns.notes1;
+export const getStaticPaths = (async ({ paginate }) => {
+  const notes = (await getCollection('notes', ({ data }) => !data.draft)).sort(
+    (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+  );
+  return paginate(notes, { pageSize: 5 });
+}) satisfies GetStaticPaths;
 
-const notes = (await getCollection('notes', ({ data }) => !data.draft)).sort(
-  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
-);
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { page } = Astro.props as Props;
+
+const sigmaPattern = dotPatterns.notes1;
 
 const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Notes' }];
 ---
@@ -30,23 +37,53 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Notes' }];
 
     <h2 class="notes-page-title">Notes</h2>
 
-    <ul class="notes-list">
+    <div class="notes-list-area">
+      <ul class="notes-list">
+        {
+          page.data.map((note) => {
+            const dateStr = new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit' })
+              .format(note.data.date)
+              .replace('-', '.');
+            return (
+              <li>
+                <a href={`/notes/${note.id}`} class="note-card">
+                  <span class="note-date">{dateStr}</span>
+                  <span class="note-title">{note.data.title}</span>
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+
       {
-        notes.map((note) => {
-          const dateStr = new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit' })
-            .format(note.data.date)
-            .replace('-', '.');
-          return (
-            <li>
-              <a href={`/notes/${note.id}`} class="note-card">
-                <span class="note-date">{dateStr}</span>
-                <span class="note-title">{note.data.title}</span>
+        page.lastPage > 1 && (
+          <nav class="pagination" aria-label="Notes ページ送り">
+            {page.url.prev ? (
+              <a class="page-link" href={page.url.prev} rel="prev">
+                <span aria-hidden="true">←</span> Prev
               </a>
-            </li>
-          );
-        })
+            ) : (
+              <span class="page-link is-disabled" aria-disabled="true">
+                <span aria-hidden="true">←</span> Prev
+              </span>
+            )}
+            <span class="page-status">
+              {page.currentPage} / {page.lastPage}
+            </span>
+            {page.url.next ? (
+              <a class="page-link" href={page.url.next} rel="next">
+                Next <span aria-hidden="true">→</span>
+              </a>
+            ) : (
+              <span class="page-link is-disabled" aria-disabled="true">
+                Next <span aria-hidden="true">→</span>
+              </span>
+            )}
+          </nav>
+        )
       }
-    </ul>
+    </div>
 
     <div class="breadcrumb-area">
       <Breadcrumb items={breadcrumbs} accentColor="--color-accent-green" />
@@ -62,6 +99,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Notes' }];
   @media (min-width: 1200px) {
     .notes-page-title,
     .note-card,
+    .pagination,
     .breadcrumb-area {
       opacity: 0;
     }
@@ -96,9 +134,15 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Notes' }];
     align-self: start;
   }
 
-  .notes-list {
+  .notes-list-area {
     grid-column: 6 / 11;
     grid-row: 3 / 9;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .notes-list {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -141,6 +185,42 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Notes' }];
     font-size: 0.875rem;
   }
 
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .page-link {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--color-text);
+    transition: color 0.3s;
+  }
+
+  @media (hover: hover) {
+    .page-link:not(.is-disabled):hover {
+      color: var(--color-accent-green);
+    }
+  }
+
+  .page-link:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+  }
+
+  .page-link.is-disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .page-status {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text);
+  }
+
   .breadcrumb-area {
     grid-column: 9 / 11;
     grid-row: 10;
@@ -170,7 +250,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Notes' }];
       margin-bottom: 2.5rem;
     }
 
-    .notes-list {
+    .notes-list-area {
       order: 3;
     }
 
@@ -193,6 +273,7 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Notes' }];
     const elements = [
       document.querySelector('.notes-page-title'),
       ...Array.from(document.querySelectorAll('.note-card')),
+      document.querySelector('.pagination'),
       document.querySelector('.breadcrumb-area'),
     ].filter((el) => el !== null);
     if (elements.length === 0) return;
@@ -224,6 +305,8 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Notes' }];
       if (!main || !('loader' in e)) return;
 
       const elements = [
+        main.querySelector('.breadcrumb-area'),
+        main.querySelector('.pagination'),
         ...Array.from(main.querySelectorAll('.note-card')).reverse(),
         main.querySelector('.notes-page-title'),
       ].filter((el) => el !== null);
