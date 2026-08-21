@@ -1,8 +1,6 @@
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import eslintPluginAstro from 'eslint-plugin-astro';
-import astroParser from 'astro-eslint-parser';
-import tsParser from '@typescript-eslint/parser';
 
 export default [
   js.configs.recommended,
@@ -10,17 +8,10 @@ export default [
     ...config,
     files: config.files ?? ['**/*.{ts,tsx}'],
   })),
+  // .astro のパーサー (astro-eslint-parser + @typescript-eslint/parser) と
+  // extraFileExtensions は eslint-plugin-astro の recommended が内包しているため
+  // ここでは指定しない
   ...eslintPluginAstro.configs.recommended,
-  {
-    files: ['**/*.astro'],
-    languageOptions: {
-      parser: astroParser,
-      parserOptions: {
-        parser: tsParser,
-        extraFileExtensions: ['.astro'],
-      },
-    },
-  },
   {
     ignores: ['dist/', 'node_modules/', '.astro/'],
   },
