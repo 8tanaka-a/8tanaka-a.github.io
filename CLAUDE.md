@@ -12,7 +12,7 @@
 - **Animation**: GSAP (SVGドットのランダム点滅・記号表示演出)
 - **Page Transitions**: Astro View Transitions
 - **Styling**: vanilla CSS (Astro scoped)
-- **Package Manager**: pnpm
+- **Package Manager**: pnpm (バージョンは `package.json` の `packageManager` で固定)
 - **TypeScript**: strict mode
 
 ## Fonts (self-hosted)
@@ -85,6 +85,21 @@ src/
 - **Prettier**: セミコロンあり, シングルクォート, タブ幅2, `prettier-plugin-astro`
 - **VSCode**: 保存時に Prettier フォーマット + ESLint 自動修正
 - **husky + lint-staged**: コミット時にステージ済みファイルへ ESLint + Prettier 実行
+
+### pnpm のバージョン
+
+`package.json` の `packageManager` が唯一の正。ローカル (corepack) / `ci.yml` / `deploy.yml` の3者がすべてここを参照するため、**ワークフロー側にバージョンを書かない**。
+
+上げるときは次の1コマンドで `packageManager` を書き換える:
+
+```bash
+corepack use pnpm@latest
+pnpm install --frozen-lockfile && pnpm lint && pnpm build  # 動作確認
+```
+
+- 自動では上がらない。Dependabot もこのフィールドは更新しない (dependabot-core#4830 で要望が上がっているが未実装)
+- この1行を変えるとローカル・CI・deploy が同時に移る
+- ビルドスクリプトの実行許可は `pnpm-workspace.yaml` の `allowBuilds` で管理する (supply chain 対策のため必要なパッケージだけを名指しで許可する)
 
 ## Components
 
