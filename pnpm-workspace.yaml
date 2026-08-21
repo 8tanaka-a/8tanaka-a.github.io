@@ -1,0 +1,7 @@
+# esbuild のビルドスクリプト実行を許可する
+# pnpm 11 系のキー
+allowBuilds:
+  esbuild: true
+# pnpm 10 系のキー (CI / deploy は pnpm@10)
+onlyBuiltDependencies:
+  - esbuild
