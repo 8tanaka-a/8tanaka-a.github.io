@@ -8,9 +8,6 @@ export default [
     ...config,
     files: config.files ?? ['**/*.{ts,tsx}'],
   })),
-  // .astro のパーサー (astro-eslint-parser + @typescript-eslint/parser) と
-  // extraFileExtensions は eslint-plugin-astro の recommended が内包しているため
-  // ここでは指定しない
   ...eslintPluginAstro.configs.recommended,
   {
     ignores: ['dist/', 'node_modules/', '.astro/'],
