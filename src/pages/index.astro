@@ -91,32 +91,28 @@ const notes = notesEntries.map((entry) => ({
     <section class="works-section">
       <h2 class="section-title works-title">Works</h2>
       <div class="carousel works-carousel">
-        {
-          works.map((work, i) => (
-            <a href={`/works/${work.slug}`} class={`card work-card work-${i + 1}`}>
-              <span class="card-text">
-                <span class="work-number">{work.number}</span>
-                <span class="work-name">{work.title}</span>
-              </span>
-            </a>
-          ))
-        }
+        {works.map((work, i) => (
+          <a href={`/works/${work.slug}`} class={`card work-card work-${i + 1}`}>
+            <span class="card-text">
+              <span class="work-number">{work.number}</span>
+              <span class="work-name">{work.title}</span>
+            </span>
+          </a>
+        ))}
       </div>
     </section>
 
     <section class="notes-section">
       <h2 class="section-title notes-title">Notes</h2>
       <div class="carousel notes-carousel">
-        {
-          notes.map((note, i) => (
-            <a href={note.href} class={`card note-card note-${i + 1}`}>
-              <span class="card-text">
-                <span class="note-date">{note.date}</span>
-                <span class="note-title">{note.title}</span>
-              </span>
-            </a>
-          ))
-        }
+        {notes.map((note, i) => (
+          <a href={note.href} class={`card note-card note-${i + 1}`}>
+            <span class="card-text">
+              <span class="note-date">{note.date}</span>
+              <span class="note-title">{note.title}</span>
+            </span>
+          </a>
+        ))}
       </div>
     </section>
   </main>

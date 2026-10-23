@@ -105,24 +105,22 @@ const highlightSet = new Set(highlightedCells.map(([c, r]) => `${c},${r}`));
   data-accent={accentColor}
 >
   <svg viewBox="0 0 550 550" fill="none" xmlns="http://www.w3.org/2000/svg" class="dot-grid-svg">
-    {
-      GRID_CELLS.map(([col, row]) => {
-        const x = OFFSET + col * STEP;
-        const y = OFFSET + row * STEP;
-        const isHighlighted = highlightSet.has(`${col},${row}`);
-        return (
-          <rect
-            x={x}
-            y={y}
-            width={CELL_SIZE}
-            height={CELL_SIZE}
-            class:list={['dot', { highlighted: isHighlighted }]}
-            data-col={col}
-            data-row={row}
-          />
-        );
-      })
-    }
+    {GRID_CELLS.map(([col, row]) => {
+      const x = OFFSET + col * STEP;
+      const y = OFFSET + row * STEP;
+      const isHighlighted = highlightSet.has(`${col},${row}`);
+      return (
+        <rect
+          x={x}
+          y={y}
+          width={CELL_SIZE}
+          height={CELL_SIZE}
+          class:list={['dot', { highlighted: isHighlighted }]}
+          data-col={col}
+          data-row={row}
+        />
+      );
+    })}
   </svg>
 </div>
 

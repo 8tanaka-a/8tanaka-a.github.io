@@ -39,50 +39,46 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Notes' }];
 
     <div class="notes-list-area">
       <ul class="notes-list">
-        {
-          page.data.map((note) => {
-            const dateStr = new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit' })
-              .format(note.data.date)
-              .replace('-', '.');
-            return (
-              <li>
-                <a href={`/notes/${note.id}`} class="note-card">
-                  <span class="note-date">{dateStr}</span>
-                  <span class="note-title">{note.data.title}</span>
-                </a>
-              </li>
-            );
-          })
-        }
+        {page.data.map((note) => {
+          const dateStr = new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit' })
+            .format(note.data.date)
+            .replace('-', '.');
+          return (
+            <li>
+              <a href={`/notes/${note.id}`} class="note-card">
+                <span class="note-date">{dateStr}</span>
+                <span class="note-title">{note.data.title}</span>
+              </a>
+            </li>
+          );
+        })}
       </ul>
 
-      {
-        page.lastPage > 1 && (
-          <nav class="pagination" aria-label="Notes ページ送り">
-            {page.url.prev ? (
-              <a class="page-link" href={page.url.prev} rel="prev">
-                <span aria-hidden="true">←</span> Prev
-              </a>
-            ) : (
-              <span class="page-link is-disabled" aria-disabled="true">
-                <span aria-hidden="true">←</span> Prev
-              </span>
-            )}
-            <span class="page-status">
-              {page.currentPage} / {page.lastPage}
+      {page.lastPage > 1 && (
+        <nav class="pagination" aria-label="Notes ページ送り">
+          {page.url.prev ? (
+            <a class="page-link" href={page.url.prev} rel="prev">
+              <span aria-hidden="true">←</span> Prev
+            </a>
+          ) : (
+            <span class="page-link is-disabled" aria-disabled="true">
+              <span aria-hidden="true">←</span> Prev
             </span>
-            {page.url.next ? (
-              <a class="page-link" href={page.url.next} rel="next">
-                Next <span aria-hidden="true">→</span>
-              </a>
-            ) : (
-              <span class="page-link is-disabled" aria-disabled="true">
-                Next <span aria-hidden="true">→</span>
-              </span>
-            )}
-          </nav>
-        )
-      }
+          )}
+          <span class="page-status">
+            {page.currentPage} / {page.lastPage}
+          </span>
+          {page.url.next ? (
+            <a class="page-link" href={page.url.next} rel="next">
+              Next <span aria-hidden="true">→</span>
+            </a>
+          ) : (
+            <span class="page-link is-disabled" aria-disabled="true">
+              Next <span aria-hidden="true">→</span>
+            </span>
+          )}
+        </nav>
+      )}
     </div>
 
     <div class="breadcrumb-area">

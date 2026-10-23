@@ -18,24 +18,22 @@ const { items, accentColor = '--color-accent-orange' } = Astro.props;
   style={`--breadcrumb-accent: var(${accentColor})`}
 >
   <ol>
-    {
-      items.map((item, i) => (
-        <li>
-          {i > 0 && (
-            <span class="separator" aria-hidden="true">
-              /
-            </span>
-          )}
-          {item.href ? (
-            <a href={item.href}>{item.label}</a>
-          ) : (
-            <span class="current" aria-current="page">
-              {item.label}
-            </span>
-          )}
-        </li>
-      ))
-    }
+    {items.map((item, i) => (
+      <li>
+        {i > 0 && (
+          <span class="separator" aria-hidden="true">
+            /
+          </span>
+        )}
+        {item.href ? (
+          <a href={item.href}>{item.label}</a>
+        ) : (
+          <span class="current" aria-current="page">
+            {item.label}
+          </span>
+        )}
+      </li>
+    ))}
   </ol>
 </nav>
 
