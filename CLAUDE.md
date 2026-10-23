@@ -13,6 +13,7 @@
 - **Page Transitions**: Astro View Transitions
 - **Styling**: vanilla CSS (Astro scoped)
 - **Package Manager**: pnpm (バージョンは `package.json` の `packageManager` で固定)
+- **Node.js**: LTS (バージョンは `.node-version` で固定)
 - **TypeScript**: strict mode
 
 ## Fonts (self-hosted)
@@ -100,6 +101,14 @@ pnpm install --frozen-lockfile && pnpm lint && pnpm build  # 動作確認
 - 自動では上がらない。Dependabot もこのフィールドは更新しない (dependabot-core#4830 で要望が上がっているが未実装)
 - この1行を変えるとローカル・CI・deploy が同時に移る
 - ビルドスクリプトの実行許可は `pnpm-workspace.yaml` の `allowBuilds` で管理する (supply chain 対策のため必要なパッケージだけを名指しで許可する)
+
+### Node.js のバージョン
+
+`.node-version` (メジャーのみ, 例: `24`) が唯一の正。`ci.yml` は `node-version-file` で、`deploy.yml` は読み取りステップ経由で `withastro/action` に渡すため、**ワークフロー側にバージョンを書かない**。
+
+- 上げるときは `.node-version` と `package.json` の `engines.node` (下限) を合わせて書き換え、`pnpm install --frozen-lockfile && pnpm lint && pnpm build` で確認する
+- LTS のみを使う。EOL は [nodejs/Release](https://github.com/nodejs/Release) で確認する
+- ローカルの nodebrew は `.node-version` を読まないので、`nodebrew use v<メジャー>` で手動で合わせる
 
 ## Components
 

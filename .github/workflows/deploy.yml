@@ -23,10 +23,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+      # withastro/action は node-version-file を受け付けないため、.node-version を読んで渡す
+      - name: Read Node.js version
+        id: node
+        run: echo "version=$(cat .node-version)" >> "$GITHUB_OUTPUT"
+
       - name: Build with Astro
         uses: withastro/action@v6
         with:
-          node-version: 22
+          node-version: ${{ steps.node.outputs.version }}
 
   deploy:
     needs: build
