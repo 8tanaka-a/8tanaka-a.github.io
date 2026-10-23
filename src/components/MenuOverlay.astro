@@ -13,20 +13,18 @@ const items = [
 <div id="menu-overlay" class="overlay" data-menu-overlay aria-hidden="true" inert>
   <nav class="menu" aria-label="メインナビゲーション">
     <ul class="menu-list">
-      {
-        items.map((item) => (
-          <li>
-            <a
-              href={item.href}
-              class="menu-card"
-              data-menu-link
-              style={`--card-accent: var(${item.accent})`}
-            >
-              {item.label}
-            </a>
-          </li>
-        ))
-      }
+      {items.map((item) => (
+        <li>
+          <a
+            href={item.href}
+            class="menu-card"
+            data-menu-link
+            style={`--card-accent: var(${item.accent})`}
+          >
+            {item.label}
+          </a>
+        </li>
+      ))}
       <li class="menu-github-item">
         <a
           href="https://github.com/8tanaka-a"
@@ -49,7 +47,10 @@ const items = [
         aria-label="ライトモード"
         data-theme="light"
       >
-        <span class="theme-icon" style={`--icon-url: url("${lightSvgUrl}")`} aria-hidden="true"
+        <span
+          class="theme-icon"
+          style={`--icon-url: url("${lightSvgUrl}")`}
+          aria-hidden="true"
         ></span>
       </button>
       <button
@@ -59,7 +60,10 @@ const items = [
         aria-label="ダークモード"
         data-theme="dark"
       >
-        <span class="theme-icon" style={`--icon-url: url("${darkSvgUrl}")`} aria-hidden="true"
+        <span
+          class="theme-icon"
+          style={`--icon-url: url("${darkSvgUrl}")`}
+          aria-hidden="true"
         ></span>
       </button>
     </div>

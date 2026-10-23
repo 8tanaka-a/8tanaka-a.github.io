@@ -60,19 +60,19 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
 
     <div class="work-body-wrap">
       <div class="work-body">
-        {work.body.split('\n\n').map((paragraph) => <p>{paragraph}</p>)}
+        {work.body.split('\n\n').map((paragraph) => (
+          <p>{paragraph}</p>
+        ))}
       </div>
     </div>
 
     <nav class="works-nav" aria-label="他の実績">
-      {
-        otherWorks.map((w) => (
-          <a href={`/works/${w.slug}`} class="works-nav-card">
-            <span class="nav-number">{w.number}</span>
-            <span class="nav-title">{w.title}</span>
-          </a>
-        ))
-      }
+      {otherWorks.map((w) => (
+        <a href={`/works/${w.slug}`} class="works-nav-card">
+          <span class="nav-number">{w.number}</span>
+          <span class="nav-title">{w.title}</span>
+        </a>
+      ))}
     </nav>
 
     <div class="breadcrumb-area">
