@@ -2,8 +2,7 @@
 
 フリーランスのフロントエンドエンジニア「one code」のポートフォリオサイトです。
 
-<!-- TODO: リポ名確定後にライブURLを記載 -->
-<!-- Live: https://example.com -->
+Live: https://8tanaka-a.github.io/
 
 ## 意識したこと
 

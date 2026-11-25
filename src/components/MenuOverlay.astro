@@ -32,6 +32,7 @@ const items = [
           rel="noopener noreferrer"
           class="menu-card menu-github"
           data-menu-link
+          aria-label="GitHub プロフィール (新しいタブで開きます)"
           style="--card-accent: var(--color-text)"
         >
           GitHub
@@ -207,13 +208,16 @@ const items = [
       }
     });
 
+    // リンク・ボタン以外 (カード間の隙間や余白) のクリックはすべて背景とみなして閉じる
     overlay.addEventListener('click', (e) => {
-      if (e.target === overlay) {
+      if (e.target instanceof Element && !e.target.closest('a, button')) {
         document.dispatchEvent(new CustomEvent(CLOSE_EVENT));
       }
     });
 
-    cards.forEach((card) => {
+    // 新しいタブで開く外部リンク (GitHub) はブラウザ標準の挙動に任せる
+    const internalCards = cards.filter((card) => card.getAttribute('target') !== '_blank');
+    internalCards.forEach((card) => {
       card.addEventListener('click', (e) => {
         e.preventDefault();
         const href = card.getAttribute('href');

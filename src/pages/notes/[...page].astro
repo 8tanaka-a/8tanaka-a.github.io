@@ -259,76 +259,11 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Notes' }];
 </style>
 
 <script>
-  import gsap from 'gsap';
+  import { setupPageMotion } from '../../scripts/page-motion';
 
-  const isStacked = () => window.matchMedia('(max-width: 1199px)').matches;
-
-  function enterAnimation() {
-    if (isStacked()) return;
-    if (!document.querySelector('.notes-list-main')) return;
-    const elements = [
-      document.querySelector('.notes-page-title'),
-      ...Array.from(document.querySelectorAll('.note-card')),
-      document.querySelector('.pagination'),
-      document.querySelector('.breadcrumb-area'),
-    ].filter((el) => el !== null);
-    if (elements.length === 0) return;
-
-    // メニュー経由の遷移ではメニューのフェードアウトが視覚的な遷移なので
-    // GSAP のフェードインはスキップ。ただし CSS pre-hide で opacity:0 のままだと
-    // メニュー消失後に見えないので opacity:1 を直接当てて可視化する。
-    if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) {
-      gsap.set(elements, { opacity: 1, y: 0 });
-      return;
-    }
-
-    gsap.set(elements, { opacity: 0, y: 16 });
-    gsap.to(elements, {
-      opacity: 1,
-      y: 0,
-      duration: 0.3,
-      stagger: 0.05,
-      ease: 'power2.out',
-      delay: 0.1,
-    });
-  }
-
-  function setupExitAnimation() {
-    document.addEventListener('astro:before-preparation', (e) => {
-      if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
-      if (isStacked()) return;
-      const main = document.querySelector('.notes-list-main');
-      if (!main || !('loader' in e)) return;
-
-      const elements = [
-        main.querySelector('.breadcrumb-area'),
-        main.querySelector('.pagination'),
-        ...Array.from(main.querySelectorAll('.note-card')).reverse(),
-        main.querySelector('.notes-page-title'),
-      ].filter((el) => el !== null);
-
-      if (elements.length === 0) return;
-
-      const event = e as Event & { loader: () => Promise<void> };
-      const originalLoader = event.loader;
-      event.loader = async () => {
-        await Promise.all([
-          originalLoader(),
-          new Promise<void>((resolve) => {
-            gsap.to(elements, {
-              opacity: 0,
-              y: 10,
-              duration: 0.2,
-              stagger: 0.02,
-              ease: 'power2.in',
-              onComplete: resolve,
-            });
-          }),
-        ]);
-      };
-    });
-  }
-
-  setupExitAnimation();
-  document.addEventListener('astro:page-load', enterAnimation);
+  setupPageMotion({
+    main: '.notes-list-main',
+    targets: ['.notes-page-title', '.note-card', '.pagination', '.breadcrumb-area'],
+    enter: { duration: 0.3, stagger: 0.05, delay: 0.1 },
+  });
 </script>

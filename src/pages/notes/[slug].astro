@@ -207,68 +207,11 @@ const breadcrumbs = [
 </style>
 
 <script>
-  import gsap from 'gsap';
+  import { setupPageMotion } from '../../scripts/page-motion';
 
-  const isStacked = () => window.matchMedia('(max-width: 1199px)').matches;
-
-  function enterAnimation() {
-    if (isStacked()) return;
-    if (!document.querySelector('.notes-main')) return;
-    const targets = ['.note-heading', '.note-date', '.note-body', '.breadcrumb-area'];
-    const elements = targets.map((sel) => document.querySelector(sel)).filter((el) => el !== null);
-    if (elements.length === 0) return;
-
-    // メニュー経由の遷移ではメニューのフェードアウトが視覚的な遷移なので
-    // GSAP のフェードインはスキップ。ただし CSS pre-hide で opacity:0 のままだと
-    // メニュー消失後に見えないので opacity:1 を直接当てて可視化する。
-    if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) {
-      gsap.set(elements, { opacity: 1, y: 0 });
-      return;
-    }
-
-    gsap.set(elements, { opacity: 0, y: 16 });
-    gsap.to(elements, {
-      opacity: 1,
-      y: 0,
-      duration: 0.25,
-      stagger: 0.05,
-      ease: 'power2.out',
-      delay: 0.1,
-    });
-  }
-
-  function setupExitAnimation() {
-    document.addEventListener('astro:before-preparation', (e) => {
-      if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
-      if (isStacked()) return;
-      const main = document.querySelector('.notes-main');
-      if (!main || !('loader' in e)) return;
-
-      const targets = ['.breadcrumb-area', '.note-body', '.note-date', '.note-heading'];
-      const elements = targets.map((sel) => main.querySelector(sel)).filter((el) => el !== null);
-
-      if (elements.length === 0) return;
-
-      const event = e as Event & { loader: () => Promise<void> };
-      const originalLoader = event.loader;
-      event.loader = async () => {
-        await Promise.all([
-          originalLoader(),
-          new Promise<void>((resolve) => {
-            gsap.to(elements, {
-              opacity: 0,
-              y: 10,
-              duration: 0.2,
-              stagger: 0.02,
-              ease: 'power2.in',
-              onComplete: resolve,
-            });
-          }),
-        ]);
-      };
-    });
-  }
-
-  setupExitAnimation();
-  document.addEventListener('astro:page-load', enterAnimation);
+  setupPageMotion({
+    main: '.notes-main',
+    targets: ['.note-heading', '.note-date', '.note-body', '.breadcrumb-area'],
+    enter: { duration: 0.25, stagger: 0.05, delay: 0.1 },
+  });
 </script>

@@ -15,10 +15,10 @@ const { available = true } = Astro.props;
         </span>
       </a>
     </h1>
-    <p class="status">
+    <p class="status" lang="en">
       <span class="status-label">status:</span>
       <span class="status-value">FREELANCE</span>
-      <span class="status-indicator" aria-label={available ? '受注可能' : '受注停止中'}>
+      <span class="status-indicator">
         <span class="status-dot" aria-hidden="true"></span>
         <span class="status-availability">{available ? 'AVAILABLE' : 'UNAVAILABLE'}</span>
       </span>

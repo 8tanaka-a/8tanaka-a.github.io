@@ -464,62 +464,12 @@ const notes = notesEntries.map((entry) => ({
 </style>
 
 <script>
-  import gsap from 'gsap';
+  import { setupPageMotion } from '../scripts/page-motion';
 
-  const isStacked = () => window.matchMedia('(max-width: 1199px)').matches;
-
-  function setupExitAnimation() {
-    document.addEventListener('astro:before-preparation', (e) => {
-      if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
-      if (isStacked()) return;
-      const main = document.querySelector('.top-main');
-      if (!main || !('loader' in e)) return;
-
-      // フェードアウト順: Notes下→上, Works下→上, About
-      const targets = [
-        '.note-2',
-        '.note-1',
-        '.notes-title',
-        '.work-4',
-        '.work-3',
-        '.work-2',
-        '.work-1',
-        '.works-title',
-        '.about-card',
-        '.about-title',
-      ];
-
-      const elements = targets.map((sel) => main.querySelector(sel)).filter((el) => el !== null);
-
-      if (elements.length === 0) return;
-
-      const event = e as Event & { loader: () => Promise<void> };
-      const originalLoader = event.loader;
-      event.loader = async () => {
-        await Promise.all([
-          originalLoader(),
-          new Promise<void>((resolve) => {
-            gsap.to(elements, {
-              opacity: 0,
-              y: 10,
-              duration: 0.2,
-              stagger: 0.02,
-              ease: 'power2.in',
-              onComplete: resolve,
-            });
-          }),
-        ]);
-      };
-    });
-  }
-
-  function enterAnimation() {
-    if (isStacked()) return;
-    const main = document.querySelector('.top-main');
-    if (!main) return;
-
+  setupPageMotion({
+    main: '.top-main',
     // フェードイン順: About, Works上→下, Notes上→下（左から右）
-    const targets = [
+    targets: [
       '.about-title',
       '.about-card',
       '.works-title',
@@ -530,30 +480,7 @@ const notes = notesEntries.map((entry) => ({
       '.notes-title',
       '.note-1',
       '.note-2',
-    ];
-
-    const elements = targets.map((sel) => main.querySelector(sel)).filter((el) => el !== null);
-    if (elements.length === 0) return;
-
-    // メニュー経由の遷移ではメニューのフェードアウトが視覚的な遷移なので
-    // GSAP のフェードインはスキップ。ただし CSS pre-hide で opacity:0 のままだと
-    // メニュー消失後に見えないので opacity:1 を直接当てて可視化する。
-    if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) {
-      gsap.set(elements, { opacity: 1, y: 0 });
-      return;
-    }
-
-    gsap.set(elements, { opacity: 0, y: 16 });
-    gsap.to(elements, {
-      opacity: 1,
-      y: 0,
-      duration: 0.25,
-      stagger: 0.03,
-      ease: 'power2.out',
-      delay: 0.1,
-    });
-  }
-
-  setupExitAnimation();
-  document.addEventListener('astro:page-load', enterAnimation);
+    ],
+    enter: { duration: 0.25, stagger: 0.03, delay: 0.1 },
+  });
 </script>

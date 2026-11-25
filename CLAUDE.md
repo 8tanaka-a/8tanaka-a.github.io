@@ -33,13 +33,14 @@ src/
 ├── content/notes/     # 記事 (Markdown)
 ├── layouts/           # BaseLayout (共通ヘッダー/メタ/View Transitions)
 ├── pages/             # ページ
+├── scripts/           # 複数ページで共有するクライアントスクリプト (ページ表示/退場アニメーション等)
 └── styles/            # global.css, variables.css
 ```
 
 ## Design
 
 - グリッドベースのレイアウト (10カラム, gap 12px)
-- コンテナ最大幅 1440px, ブラウザ余白 32px
+- コンテナ最大幅 1600px, ブラウザ余白 32px
 - PCでは各ページ `min-height: 100dvh` の1画面完結型 (高さ不足時は自然にスクロール)
 - モノスペースフォント
 - カラー: グレーベース + オレンジアクセント
