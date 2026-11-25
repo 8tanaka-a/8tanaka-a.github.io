@@ -36,6 +36,11 @@ html {
   color-scheme: light;
 }
 
+/* スクロールバーやフォーム部品などブラウザ標準 UI もテーマに合わせる */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
 body {
   font-family: var(--font-sans);
   background-color: var(--color-bg);
