@@ -33,6 +33,7 @@ src/
 ├── content/notes/     # 記事 (Markdown)
 ├── layouts/           # BaseLayout (共通ヘッダー/メタ/View Transitions)
 ├── pages/             # ページ
+├── scripts/           # 複数ページで共有するクライアントスクリプト (ページ表示/退場アニメーション等)
 └── styles/            # global.css, variables.css
 ```
 

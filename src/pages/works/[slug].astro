@@ -87,7 +87,6 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
     新ページ描画時に一瞬 opacity:1 でフラッシュしないよう CSS で初期非表示にする。
   */
   @media (min-width: 1200px) {
-    .works-page-title,
     .work-heading,
     .work-meta,
     .work-body,
@@ -111,19 +110,6 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
     grid-column: 1 / 5;
     grid-row: 1 / -1;
     align-self: end;
-  }
-
-  .works-page-title {
-    grid-column: 6 / 8;
-    grid-row: 1;
-    font-family: var(--font-geo);
-    font-size: 2.25rem;
-    font-weight: 500;
-    letter-spacing: -0.03em;
-    line-height: 1;
-    color: var(--color-text);
-    margin: 0;
-    align-self: start;
   }
 
   .work-head {
@@ -305,82 +291,11 @@ const breadcrumbs = [{ label: 'Top', href: '/' }, { label: 'Works' }];
 </style>
 
 <script>
-  import gsap from 'gsap';
+  import { setupPageMotion } from '../../scripts/page-motion';
 
-  const isStacked = () => window.matchMedia('(max-width: 1199px)').matches;
-
-  function enterAnimation() {
-    if (isStacked()) return;
-    if (!document.querySelector('.works-main')) return;
-    const targets = [
-      '.works-page-title',
-      '.work-heading',
-      '.work-meta',
-      '.work-body',
-      '.works-nav',
-      '.breadcrumb-area',
-    ];
-    const elements = targets.map((sel) => document.querySelector(sel)).filter((el) => el !== null);
-    if (elements.length === 0) return;
-
-    // メニュー経由の遷移ではメニューのフェードアウトが視覚的な遷移なので
-    // GSAP のフェードインはスキップ。ただし CSS pre-hide で opacity:0 のままだと
-    // メニュー消失後に見えないので opacity:1 を直接当てて可視化する。
-    if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) {
-      gsap.set(elements, { opacity: 1, y: 0 });
-      return;
-    }
-
-    gsap.set(elements, { opacity: 0, y: 16 });
-    gsap.to(elements, {
-      opacity: 1,
-      y: 0,
-      duration: 0.4,
-      stagger: 0.06,
-      ease: 'power2.out',
-      delay: 0.15,
-    });
-  }
-
-  function setupExitAnimation() {
-    document.addEventListener('astro:before-preparation', (e) => {
-      if ((window as Window & { __menuNavigating?: boolean }).__menuNavigating) return;
-      if (isStacked()) return;
-      const main = document.querySelector('.works-main');
-      if (!main || !('loader' in e)) return;
-
-      const targets = [
-        '.breadcrumb-area',
-        '.works-nav',
-        '.work-body',
-        '.work-meta',
-        '.work-heading',
-        '.works-page-title',
-      ];
-      const elements = targets.map((sel) => main.querySelector(sel)).filter((el) => el !== null);
-
-      if (elements.length === 0) return;
-
-      const event = e as Event & { loader: () => Promise<void> };
-      const originalLoader = event.loader;
-      event.loader = async () => {
-        await Promise.all([
-          originalLoader(),
-          new Promise<void>((resolve) => {
-            gsap.to(elements, {
-              opacity: 0,
-              y: 10,
-              duration: 0.2,
-              stagger: 0.02,
-              ease: 'power2.in',
-              onComplete: resolve,
-            });
-          }),
-        ]);
-      };
-    });
-  }
-
-  setupExitAnimation();
-  document.addEventListener('astro:page-load', enterAnimation);
+  setupPageMotion({
+    main: '.works-main',
+    targets: ['.work-heading', '.work-meta', '.work-body', '.works-nav', '.breadcrumb-area'],
+    enter: { duration: 0.4, stagger: 0.06, delay: 0.15 },
+  });
 </script>
